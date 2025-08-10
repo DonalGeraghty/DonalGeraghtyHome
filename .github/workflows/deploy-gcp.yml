@@ -1,0 +1,102 @@
+name: Deploy to Google Cloud Platform
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+env:
+  PROJECT_ID: your-gcp-project-id
+  REGION: europe-west1
+  SERVICE_NAME: donal-geraghty-home
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Run tests
+      run: npm test -- --run
+      
+    - name: Build
+      run: npm run build
+      
+    - name: Create Dockerfile
+      run: |
+        cat > Dockerfile << 'EOF'
+        FROM nginx:alpine
+        COPY dist /usr/share/nginx/html
+        COPY nginx.conf /etc/nginx/nginx.conf
+        EXPOSE 8080
+        CMD ["nginx", "-g", "daemon off;"]
+        EOF
+        
+        cat > nginx.conf << 'EOF'
+        events {
+          worker_connections 1024;
+        }
+        http {
+          include /etc/nginx/mime.types;
+          default_type application/octet-stream;
+          
+          server {
+            listen 8080;
+            server_name localhost;
+            root /usr/share/nginx/html;
+            index index.html;
+            
+            location / {
+              try_files $uri $uri/ /index.html;
+            }
+            
+            location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg)$ {
+              expires 1y;
+              add_header Cache-Control "public, immutable";
+            }
+          }
+        }
+        EOF
+      
+    - name: Setup Google Cloud CLI
+      uses: google-github-actions/setup-gcloud@v2
+      with:
+        project_id: ${{ env.PROJECT_ID }}
+        service_account_key: ${{ secrets.GCP_SA_KEY }}
+        export_default_credentials: true
+        
+    - name: Configure Docker for GCP
+      run: gcloud auth configure-docker
+      
+    - name: Build and push Docker image
+      run: |
+        docker build -t gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }}:${{ github.sha }} .
+        docker push gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
+        
+    - name: Deploy to Cloud Run
+      run: |
+        gcloud run deploy ${{ env.SERVICE_NAME }} \
+          --image gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }}:${{ github.sha }} \
+          --region ${{ env.REGION }} \
+          --platform managed \
+          --allow-unauthenticated \
+          --port 8080 \
+          --memory 512Mi \
+          --cpu 1 \
+          --max-instances 10
+          
+    - name: Get service URL
+      run: |
+        echo "Service URL: $(gcloud run services describe ${{ env.SERVICE_NAME }} --region ${{ env.REGION }} --format 'value(status.url)')"
