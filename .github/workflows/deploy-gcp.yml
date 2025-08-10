@@ -72,11 +72,15 @@ jobs:
         EOF
       
     - name: Setup Google Cloud CLI
-      uses: google-github-actions/setup-gcloud@v2
+      uses: google-github-actions/setup-gcloud@v1
+      
+    - name: Authenticate with Google Cloud
+      uses: google-github-actions/auth@v1
       with:
-        project_id: ${{ env.PROJECT_ID }}
-        service_account_key: ${{ secrets.GCP_SA_KEY }}
-        export_default_credentials: true
+        credentials_json: ${{ secrets.GCP_SA_KEY }}
+        
+    - name: Set Project
+      run: gcloud config set project ${{ env.PROJECT_ID }}
         
     - name: Verify Authentication
       run: |
