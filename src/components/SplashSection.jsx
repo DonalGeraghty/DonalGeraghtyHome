@@ -1,10 +1,8 @@
 import React from 'react'
-import ThreeJSBackground from './ThreeJSBackground'
 
 function SplashSection({ scrollToNextSection }) {
   return (
     <section id="home" className="splash">
-      <ThreeJSBackground />
       <div className="splash-content">
         <div className="splash-text">
         </div>
