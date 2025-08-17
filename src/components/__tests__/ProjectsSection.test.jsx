@@ -120,7 +120,9 @@ describe('ProjectsSection', () => {
 
     const githubLinks = screen.getAllByText('GitHub Repository')
     expect(githubLinks).toHaveLength(2)
-    expect(screen.getByText('Live Demo')).toBeInTheDocument()
+    
+    const liveDemoLinks = screen.getAllByText('Live Demo')
+    expect(liveDemoLinks).toHaveLength(2)
   })
 
   it('has proper grid layout structure', () => {

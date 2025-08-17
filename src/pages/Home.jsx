@@ -3,6 +3,7 @@ import SplashSection from '../components/SplashSection'
 import AboutSection from '../components/AboutSection'
 import PortfolioSection from '../components/PortfolioSection'
 import ProjectsSection from '../components/ProjectsSection'
+import PythonProjectsSection from '../components/PythonProjectsSection'
 import ContactSection from '../components/ContactSection'
 import UserInfoSection from '../components/UserInfoSection'
 import FooterSection from '../components/FooterSection'
@@ -23,6 +24,7 @@ function Home() {
       <SplashSection scrollToNextSection={scrollToNextSection} />
       <AboutSection />
       <PortfolioSection />
+      <PythonProjectsSection />
       <ProjectsSection />
       <ContactSection />
       <UserInfoSection />

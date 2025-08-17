@@ -59,6 +59,12 @@ src/
 - [GitHub Repository](https://github.com/DonalGeraghty/R-Shiny-ExploreData)
 - [Live Demo](https://donalgeraghty.shinyapps.io/CSVReader/)
 
+### CEX Blu-Ray 4K Crawler
+- **Automated Web Scraping & Notification System**
+- Technologies: Python, Playwright, Web Scraping, Automation, Email Notifications, CSV Processing
+- Features: Automated daily crawling, Intelligent diff detection, Email notifications, CSV data persistence
+- [GitHub Repository](https://github.com/DonalGeraghty/PlaywrightCrawlerWeBuy)
+
 ## 🚀 Getting Started
 
 ### Prerequisites

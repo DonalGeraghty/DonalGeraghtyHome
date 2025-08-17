@@ -70,6 +70,7 @@ describe('Home', () => {
       'splash-section',
       'about-section',
       'portfolio-section',
+      'python-projects-section',
       'projects-section',
       'contact-section',
       'user-info-section',
@@ -77,7 +78,7 @@ describe('Home', () => {
     ]
     
     const renderedSections = screen.getAllByTestId(/section$/)
-    expect(renderedSections).toHaveLength(7)
+    expect(renderedSections).toHaveLength(8)
     
     sections.forEach((sectionId, index) => {
       expect(renderedSections[index]).toHaveAttribute('data-testid', sectionId)
