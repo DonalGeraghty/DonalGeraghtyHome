@@ -55,6 +55,8 @@ src/
 **Comprehensive API Testing & Validation System**
 - **Technologies:** Java, JUnit, REST Assured, Maven, API Testing, JSON Validation, HTTP Client
 - **Key Features:** Response code validation, Header content-type verification, JSON response body assertions, Multi-endpoint testing, Automated test execution, Professional testing practices, Extensible test framework
+- **Context:** Built for job application demonstrating professional testing practices
+- **Note:** Original Zomato API endpoint no longer available, but includes working demo GIF and comprehensive setup instructions for interviewers with no Java experience
 - **GitHub:** [JavaApiTesting](https://github.com/DonalGeraghty/JavaApiTesting)
 
 ### 📊 R Shiny Clustering Application

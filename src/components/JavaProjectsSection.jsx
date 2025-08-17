@@ -16,9 +16,11 @@ function JavaProjectsSection() {
               </div>
               <p>
                 <strong>Comprehensive API Testing & Validation System</strong><br/>
-                Built a robust Java-based testing framework for API validation using JUnit and REST Assured. 
+                Built a robust Java-based testing framework for API validation using JUnit and REST Assured as part of a job application. 
                 The project demonstrates professional testing practices including response code validation, 
                 header verification, JSON body assertions, and comprehensive endpoint testing. 
+                While the original Zomato API endpoint is no longer available, the project includes a working demo GIF 
+                and detailed setup instructions designed for interviewers with no Java experience to successfully run the tests.
                 Features include automated test execution, detailed reporting, and extensible test scenarios.
               </p>
               <div className="project-tech">

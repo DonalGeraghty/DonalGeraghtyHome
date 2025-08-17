@@ -16,6 +16,8 @@ describe('JavaProjectsSection', () => {
   it('renders project description', () => {
     render(<JavaProjectsSection />)
     expect(screen.getByText(/Comprehensive API Testing & Validation System/)).toBeInTheDocument()
+    expect(screen.getByText(/Built a robust Java-based testing framework for API validation using JUnit and REST Assured as part of a job application/)).toBeInTheDocument()
+    expect(screen.getByText(/While the original Zomato API endpoint is no longer available, the project includes a working demo GIF/)).toBeInTheDocument()
   })
 
   it('has proper section structure', () => {
