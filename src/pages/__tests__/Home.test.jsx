@@ -56,7 +56,7 @@ describe('Home', () => {
     
     expect(screen.getByTestId('splash-section')).toBeInTheDocument()
     expect(screen.getByTestId('about-section')).toBeInTheDocument()
-    expect(screen.getByTestId('skills-section')).toBeInTheDocument()
+    expect(screen.getByTestId('portfolio-section')).toBeInTheDocument()
     expect(screen.getByTestId('projects-section')).toBeInTheDocument()
     expect(screen.getByTestId('contact-section')).toBeInTheDocument()
     expect(screen.getByTestId('user-info-section')).toBeInTheDocument()
@@ -69,7 +69,7 @@ describe('Home', () => {
     const sections = [
       'splash-section',
       'about-section',
-      'skills-section',
+      'portfolio-section',
       'projects-section',
       'contact-section',
       'user-info-section',
@@ -131,7 +131,7 @@ describe('Home', () => {
     // Check that all child components are rendered
     expect(screen.getByTestId('splash-section')).toBeInTheDocument()
     expect(screen.getByTestId('about-section')).toBeInTheDocument()
-    expect(screen.getByTestId('skills-section')).toBeInTheDocument()
+    expect(screen.getByTestId('portfolio-section')).toBeInTheDocument()
     expect(screen.getByTestId('projects-section')).toBeInTheDocument()
     expect(screen.getByTestId('contact-section')).toBeInTheDocument()
     expect(screen.getByTestId('user-info-section')).toBeInTheDocument()

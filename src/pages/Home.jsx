@@ -1,7 +1,7 @@
 import React from 'react'
 import SplashSection from '../components/SplashSection'
 import AboutSection from '../components/AboutSection'
-import SkillsSection from '../components/SkillsSection'
+import PortfolioSection from '../components/PortfolioSection'
 import ProjectsSection from '../components/ProjectsSection'
 import ContactSection from '../components/ContactSection'
 import UserInfoSection from '../components/UserInfoSection'
@@ -22,7 +22,7 @@ function Home() {
     <>
       <SplashSection scrollToNextSection={scrollToNextSection} />
       <AboutSection />
-      <SkillsSection />
+      <PortfolioSection />
       <ProjectsSection />
       <ContactSection />
       <UserInfoSection />

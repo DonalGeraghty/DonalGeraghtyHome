@@ -11,6 +11,7 @@
   --scrollbar-track: #f1f1f1;
   --scrollbar-thumb: #888;
   --scrollbar-thumb-hover: #555;
+  --accent-color: #3b82f6;
 }
 
 [data-theme="dark"] {
@@ -26,6 +27,7 @@
   --scrollbar-track: #1a1a2e;
   --scrollbar-thumb: #4a5568;
   --scrollbar-thumb-hover: #718096;
+  --accent-color: #60a5fa;
 }
 
 * {
