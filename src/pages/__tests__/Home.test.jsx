@@ -19,6 +19,14 @@ vi.mock('../../components/SkillsSection', () => ({
   default: () => <div data-testid="skills-section">SkillsSection</div>
 }))
 
+vi.mock('../../components/PythonProjectsSection', () => ({
+  default: () => <div data-testid="python-projects-section">PythonProjectsSection</div>
+}))
+
+vi.mock('../../components/JavaProjectsSection', () => ({
+  default: () => <div data-testid="java-projects-section">JavaProjectsSection</div>
+}))
+
 vi.mock('../../components/ProjectsSection', () => ({
   default: () => <div data-testid="projects-section">ProjectsSection</div>
 }))
@@ -71,6 +79,7 @@ describe('Home', () => {
       'about-section',
       'portfolio-section',
       'python-projects-section',
+      'java-projects-section',
       'projects-section',
       'contact-section',
       'user-info-section',
@@ -78,7 +87,7 @@ describe('Home', () => {
     ]
     
     const renderedSections = screen.getAllByTestId(/section$/)
-    expect(renderedSections).toHaveLength(8)
+    expect(renderedSections).toHaveLength(9)
     
     sections.forEach((sectionId, index) => {
       expect(renderedSections[index]).toHaveAttribute('data-testid', sectionId)

@@ -45,25 +45,31 @@ src/
 
 ## 🎯 Featured Projects
 
-### R Shiny Clustering Application
-- **Interactive K-means Clustering on Iris Dataset**
-- Technologies: R, R Shiny, ggplot2, Statistical Analysis, Machine Learning
-- Features: Interactive clustering (1-25 clusters), PCA analysis, hierarchical clustering dendrograms
-- [GitHub Repository](https://github.com/DonalGeraghty/R-Shiny-Clustering)
-- [Live Demo](https://donalgeraghty.shinyapps.io/Clustering_Iris_Data/)
+### 🐍 CEX Blu-Ray 4K Crawler
+**Automated Web Scraping & Notification System**
+- **Technologies:** Python, Playwright, Web Scraping, Automation, Email Notifications, CSV Processing
+- **Key Features:** Automated daily crawling, Intelligent diff detection, Email notifications, CSV data persistence, Browser automation, Error handling & recovery
+- **GitHub:** [PlaywrightCrawlerWeBuy](https://github.com/DonalGeraghty/PlaywrightCrawlerWeBuy)
 
-### R Shiny Data Explorer
-- **Dynamic Data Visualization & Analysis Platform**
-- Technologies: R, R Shiny, Data Visualization, Statistical Analysis, Web Development
-- Features: CSV file uploads, automatic data cleaning, multiple visualization options
-- [GitHub Repository](https://github.com/DonalGeraghty/R-Shiny-ExploreData)
-- [Live Demo](https://donalgeraghty.shinyapps.io/CSVReader/)
+### ☕ Java API Testing Framework
+**Comprehensive API Testing & Validation System**
+- **Technologies:** Java, JUnit, REST Assured, Maven, API Testing, JSON Validation, HTTP Client
+- **Key Features:** Response code validation, Header content-type verification, JSON response body assertions, Multi-endpoint testing, Automated test execution, Professional testing practices, Extensible test framework
+- **GitHub:** [JavaApiTesting](https://github.com/DonalGeraghty/JavaApiTesting)
 
-### CEX Blu-Ray 4K Crawler
-- **Automated Web Scraping & Notification System**
-- Technologies: Python, Playwright, Web Scraping, Automation, Email Notifications, CSV Processing
-- Features: Automated daily crawling, Intelligent diff detection, Email notifications, CSV data persistence
-- [GitHub Repository](https://github.com/DonalGeraghty/PlaywrightCrawlerWeBuy)
+### 📊 R Shiny Clustering Application
+**Interactive K-means Clustering on Iris Dataset**
+- **Technologies:** R, R Shiny, ggplot2, Statistical Analysis, Machine Learning
+- **Key Features:** Interactive clustering, PCA visualization, Confusion matrix analysis, Real-time parameter adjustment, Responsive web interface
+- **GitHub:** [R-Shiny-Clustering](https://github.com/DonalGeraghty/R-Shiny-Clustering)
+- **Live Demo:** [Clustering Iris Data](https://donalgeraghty.shinyapps.io/Clustering_Iris_Data/)
+
+### 📈 R Shiny Data Explorer
+**Interactive Data Analysis & Visualization Tool**
+- **Technologies:** R, R Shiny, Data Manipulation, Statistical Analysis, Interactive Visualizations
+- **Key Features:** CSV data upload, Interactive charts, Statistical summaries, Data filtering, Export capabilities, Responsive design
+- **GitHub:** [R-Shiny-ExploreData](https://github.com/DonalGeraghty/R-Shiny-ExploreData)
+- **Live Demo:** [CSV Reader](https://donalgeraghty.shinyapps.io/CSVReader/)
 
 ## 🚀 Getting Started
 
