@@ -57,6 +57,7 @@ src/
 - Technologies: R, R Shiny, Data Visualization, Statistical Analysis, Web Development
 - Features: CSV file uploads, automatic data cleaning, multiple visualization options
 - [GitHub Repository](https://github.com/DonalGeraghty/R-Shiny-ExploreData)
+- [Live Demo](https://donalgeraghty.shinyapps.io/CSVReader/)
 
 ## 🚀 Getting Started
 

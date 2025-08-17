@@ -65,6 +65,10 @@ function ProjectsSection() {
                 <a href="https://github.com/DonalGeraghty/R-Shiny-ExploreData" target="_blank" rel="noopener noreferrer">
                   GitHub Repository
                 </a>
+                <span> • </span>
+                <a href="https://donalgeraghty.shinyapps.io/CSVReader/" target="_blank" rel="noopener noreferrer">
+                  Live Demo
+                </a>
               </div>
             </div>
           </div>
