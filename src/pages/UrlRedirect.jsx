@@ -10,7 +10,7 @@ function UrlRedirect() {
   useEffect(() => {
     const fetchLongUrl = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/url/${shortCode}`)
+        const response = await fetch(`https://url-shortener-api-965419436472.us-central1.run.app/api/url/${shortCode}`)
         
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`)

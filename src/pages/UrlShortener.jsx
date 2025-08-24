@@ -18,7 +18,7 @@ function UrlShortener() {
     setResponse('')
 
     try {
-      const response = await fetch('http://localhost:5000/api/data', {
+      const response = await fetch('https://url-shortener-api-965419436472.us-central1.run.app/api/data', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -59,7 +59,7 @@ function UrlShortener() {
       if (err.name === 'SyntaxError') {
         setError('Invalid JSON response from server. The API might be returning an error page or plain text.')
       } else if (err.name === 'TypeError' && err.message.includes('fetch')) {
-        setError('Network error: Unable to connect to the API server. Make sure the server is running on http://localhost:5000')
+        setError('Network error: Unable to connect to the API server. Please check your internet connection.')
       } else {
         setError(`Error: ${err.message}`)
       }
