@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom'
 import './App.css'
 import Home from './pages/Home'
+import UrlShortener from './pages/UrlShortener'
+import UrlRedirect from './pages/UrlRedirect'
 import ThemeToggle from './components/ThemeToggle'
 import { ThemeProvider } from './context/ThemeContext'
 
@@ -38,6 +40,13 @@ function Navbar() {
           >
             Home
           </Link>
+          <Link 
+            to="/urlshortener" 
+            className={`nav-link ${location.pathname === '/urlshortener' ? 'active' : ''}`}
+            onClick={scrollToTop}
+          >
+            URL Shortener
+          </Link>
         </div>
         <div className="nav-right">
           <ThemeToggle />
@@ -68,6 +77,8 @@ function App() {
           <Navbar />
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/urlshortener" element={<UrlShortener />} />
+            <Route path="/redirect/:shortCode" element={<UrlRedirect />} />
           </Routes>
         </div>
       </Router>
