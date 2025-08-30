@@ -54,7 +54,7 @@ src/
 │   ├── AboutSection.jsx # About me section
 │   ├── SkillsSection.jsx # Skills showcase
 │   ├── PythonProjectsSection.jsx # Python projects
-│   ├── ProjectsSection.jsx # R Shiny projects
+│   ├── RShinyProjectsSection.jsx # R Shiny projects
 │   ├── ContactSection.jsx # Contact form
 │   ├── FooterSection.jsx # Footer component
 │   └── UserInfoSection.jsx # System information
@@ -125,7 +125,7 @@ export const API_ENDPOINTS = {
 The portfolio includes various sections that can be customized:
 - **Personal Information**: Update `AboutSection.jsx` with your details
 - **Skills**: Modify `SkillsSection.jsx` to showcase your expertise
-- **Projects**: Add new projects to `PythonProjectsSection.jsx` and `ProjectsSection.jsx`
+- **Projects**: Add new projects to `PythonProjectsSection.jsx` and `RShinyProjectsSection.jsx`
 - **Contact**: Update contact information in `ContactSection.jsx`
 
 ### Environment Variables

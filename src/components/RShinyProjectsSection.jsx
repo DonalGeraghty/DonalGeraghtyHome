@@ -1,6 +1,6 @@
 import React from 'react'
 
-function ProjectsSection() {
+function RShinyProjectsSection() {
   return (
     <section id="projects" className="section projects-section">
       <div className="parallax-background">
@@ -78,4 +78,4 @@ function ProjectsSection() {
   )
 }
 
-export default ProjectsSection 
+export default RShinyProjectsSection

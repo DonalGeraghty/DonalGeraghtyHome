@@ -1,37 +1,25 @@
 import React from 'react'
 import SplashSection from '../components/SplashSection'
 import AboutSection from '../components/AboutSection'
-import PortfolioSection from '../components/PortfolioSection'
 import PythonProjectsSection from '../components/PythonProjectsSection'
 import JavaProjectsSection from '../components/JavaProjectsSection'
-import ProjectsSection from '../components/ProjectsSection'
+import RShinyProjectsSection from '../components/RShinyProjectsSection'
+import PortfolioSection from '../components/PortfolioSection'
 import ContactSection from '../components/ContactSection'
-import UserInfoSection from '../components/UserInfoSection'
 import FooterSection from '../components/FooterSection'
 
 function Home() {
-  const scrollToNextSection = () => {
-    const aboutSection = document.getElementById('about');
-    if (aboutSection) {
-      aboutSection.scrollIntoView({ 
-        behavior: 'smooth',
-        block: 'start'
-      });
-    }
-  };
-
   return (
-    <>
-      <SplashSection scrollToNextSection={scrollToNextSection} />
+    <div className="home-page">
+      <SplashSection />
       <AboutSection />
-      <PortfolioSection />
       <PythonProjectsSection />
       <JavaProjectsSection />
-      <ProjectsSection />
+      <RShinyProjectsSection />
+      <PortfolioSection />
       <ContactSection />
-      <UserInfoSection />
       <FooterSection />
-    </>
+    </div>
   )
 }
 
