@@ -33,6 +33,36 @@ function PythonProjectsSection() {
                 </a>
               </div>
             </div>
+            
+            <div className="project-card">
+              <div className="project-header">
+                <div className="project-icon-container">
+                  <span className="python-logo">🐍</span>
+                </div>
+                <h3>URL Shortener API</h3>
+              </div>
+              <p>
+                <strong>High-Performance URL Shortening Service</strong><br/>
+                Developed a robust REST API service that converts long URLs into short, manageable links with automatic redirection. 
+                The system is built with Flask for rapid development, deployed on Google Cloud Run for automatic scaling, 
+                and uses Firestore as a NoSQL database for reliable URL storage and retrieval.
+              </p>
+              <div className="project-tech">
+                <strong>Technologies:</strong> Python, Flask, Google Cloud Run, Firestore, REST API, Cloud Native, NoSQL Database
+              </div>
+              <div className="project-features">
+                <strong>Key Features:</strong> URL shortening & redirection, Firestore integration, Cloud Run deployment, 
+                RESTful API design, Automatic scaling, High availability, Real-time database operations
+              </div>
+              <div className="project-links">
+                <a href="/urlshortener">
+                  URL Shortener
+                </a>
+                <a href="https://github.com/DonalGeraghty/url-shortener-api" target="_blank" rel="noopener noreferrer">
+                  GitHub Repository
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </div>

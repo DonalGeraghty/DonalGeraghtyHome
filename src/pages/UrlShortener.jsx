@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { API_BASE_URL, API_ENDPOINTS } from '../config/api'
 
 function UrlShortener() {
   const [url, setUrl] = useState('')
@@ -18,7 +19,7 @@ function UrlShortener() {
     setResponse('')
 
     try {
-      const response = await fetch('https://url-shortener-api-965419436472.us-central1.run.app/api/data', {
+      const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.CREATE_SHORT_URL}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -72,6 +73,8 @@ function UrlShortener() {
     <div className="url-shortener-page">
       <div className="container">
         <h1>URL Shortener</h1>
+        
+
         
         <form onSubmit={handleSubmit} className="url-form">
           <div className="form-group">

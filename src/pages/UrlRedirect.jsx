@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { API_BASE_URL, API_ENDPOINTS } from '../config/api'
 
 function UrlRedirect() {
   const { shortCode } = useParams()
@@ -10,7 +11,7 @@ function UrlRedirect() {
   useEffect(() => {
     const fetchLongUrl = async () => {
       try {
-        const response = await fetch(`https://url-shortener-api-965419436472.us-central1.run.app/api/url/${shortCode}`)
+        const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.GET_LONG_URL}/${shortCode}`)
         
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`)
