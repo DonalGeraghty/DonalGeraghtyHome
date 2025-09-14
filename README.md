@@ -40,6 +40,7 @@ A modern, responsive portfolio website featuring a URL shortening web applicatio
 
 ### Development Tools
 - **Testing**: Jest and React Testing Library
+- **Storybook**: Component development and documentation
 - **Linting**: ESLint configuration
 - **Version Control**: Git with GitHub
 
@@ -104,6 +105,8 @@ src/
 - `npm run build` - Build for production
 - `npm run preview` - Preview production build
 - `npm run test` - Run test suite
+- `npm run storybook` - Start Storybook development server
+- `npm run build-storybook` - Build Storybook for production
 
 ## 🔧 Configuration
 
@@ -194,6 +197,44 @@ All components are modular and can be easily customized or extended. Each compon
 - Error boundaries
 - Loading states
 - Theme compatibility
+
+## 📚 Storybook
+
+This project includes Storybook for component development and documentation. Storybook provides an isolated environment to develop and test UI components.
+
+### Running Storybook
+
+```bash
+# Start Storybook development server
+npm run storybook
+
+# Build Storybook for production
+npm run build-storybook
+```
+
+### Available Stories
+
+- **ThemeToggle**: Interactive theme switching component with light/dark mode examples
+- **AboutSection**: Portfolio about section component
+- **SplashSection**: Hero section with animated elements and scroll functionality
+- **Navbar**: Navigation component with theme toggle and live time display
+
+### Storybook Features
+
+- **Interactive Controls**: Test different component states and props
+- **Theme Support**: Switch between light and dark themes
+- **Documentation**: Auto-generated documentation for each component
+- **Responsive Testing**: Test components at different screen sizes
+- **Accessibility**: Built-in accessibility testing tools
+
+### Adding New Stories
+
+To add a new story for a component:
+
+1. Create a `.stories.jsx` file next to your component
+2. Follow the existing story patterns for consistency
+3. Include interactive controls and documentation
+4. Test both light and dark theme variants
 
 ## 🧪 Testing
 
