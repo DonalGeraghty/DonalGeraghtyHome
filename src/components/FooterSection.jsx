@@ -1,4 +1,5 @@
 import React from 'react'
+import './FooterSection.css'
 
 function FooterSection() {
   return (

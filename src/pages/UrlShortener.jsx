@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import './UrlShortener.css'
 import { API_BASE_URL, API_ENDPOINTS } from '../config/api'
 
 function UrlShortener() {

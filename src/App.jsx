@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom'
 import './App.css'
+import './components/Navbar.css'
 import Home from './pages/Home'
 import UrlShortener from './pages/UrlShortener'
 import UrlRedirect from './pages/UrlRedirect'

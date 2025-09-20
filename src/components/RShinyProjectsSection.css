@@ -1,0 +1,70 @@
+/* R Shiny Projects Section Styles */
+
+.projects-section {
+  position: relative;
+  overflow: hidden;
+}
+
+.parallax-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.parallax-image {
+  width: 100%;
+  height: 120%;
+  object-fit: cover;
+  opacity: 0.1;
+  filter: blur(2px);
+  transform: translateY(-10%);
+  animation: slow-float 20s ease-in-out infinite;
+}
+
+@keyframes slow-float {
+  0%, 100% { transform: translateY(-10%); }
+  50% { transform: translateY(-5%); }
+}
+
+.projects-section .container,
+.projects-section .section-title,
+.projects-section .section-content {
+  position: relative;
+  z-index: 2;
+}
+
+/* R-specific logo styling */
+.r-logo {
+  color: white;
+  font-weight: 900;
+  font-size: 1.5rem;
+  font-family: 'Arial Black', 'Helvetica Bold', sans-serif;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .parallax-image {
+    height: 140%;
+    opacity: 0.08;
+  }
+  
+  .r-logo {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .parallax-image {
+    height: 150%;
+    opacity: 0.06;
+  }
+  
+  .r-logo {
+    font-size: 1rem;
+  }
+}

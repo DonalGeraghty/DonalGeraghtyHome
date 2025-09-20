@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import './UrlRedirect.css'
 import { useParams, useNavigate } from 'react-router-dom'
 import { API_BASE_URL, API_ENDPOINTS } from '../config/api'
 
