@@ -1,20 +1,231 @@
 /* App Container */
 .app {
   min-height: 100vh;
-  overflow-x: hidden;
-  transition: background-color 0.3s ease;
-  /* Smooth scrolling */
-  scroll-behavior: smooth;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Navbar */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: rgba(26, 26, 46, 0.8);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border-color);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+}
+
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-logo h2 {
+  font-size: 1.5rem;
+  background: linear-gradient(135deg, var(--accent-color), #a855f7);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 800;
+}
+
+.nav-links {
+  display: flex;
+  gap: 2rem;
+}
+
+.nav-link {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: var(--text-primary);
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--accent-color);
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+  width: 100%;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.nav-time p {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
 }
 
 /* Home Page */
 .home-page {
   padding-top: 80px;
+  flex: 1;
 }
 
 /* Container */
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 4rem 2rem;
+}
+
+.main-content {
+  flex: 1;
+}
+
+.number-list {
+  list-style-type: none;
+  padding: 1rem;
+  margin-top: 2rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.number-list li {
+  background: var(--bg-tertiary);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  font-weight: 600;
+  color: var(--accent-color);
+  transition: all 0.2s ease;
+}
+
+.number-list li:hover {
+  transform: translateY(-2px);
+  background: var(--bg-secondary);
+  border-color: var(--accent-color);
+}
+
+/* Home Nav */
+.home-nav {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 2rem;
+}
+
+.user-status {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.logout-button,
+.login-link,
+.login-button {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: 1px solid var(--accent-color);
+  background: transparent;
+  color: var(--accent-color);
+  text-decoration: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.logout-button:hover,
+.login-link:hover,
+.login-button:hover {
+  background: var(--accent-color);
+  color: #fff;
+}
+
+/* Login Form */
+.login-form {
+  max-width: 400px;
+  margin: 4rem auto;
+  padding: 2rem;
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 20px var(--shadow-color);
+}
+
+.login-form h2 {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text-secondary);
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.login-button {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.members-only {
+  margin-top: 3rem;
+  padding: 2rem;
+  background: rgba(var(--accent-color), 0.05);
+  border-radius: 12px;
+  border: 1px dashed var(--accent-color);
+}
+
+.members-only h3 {
+  margin-bottom: 1rem;
+  color: var(--accent-color);
+}
+
+.login-prompt {
+  margin-top: 2rem;
+  font-style: italic;
+  color: var(--text-secondary);
+}
+
+.login-prompt a {
+  color: var(--accent-color);
+  font-weight: 600;
+  text-decoration: none;
 }
