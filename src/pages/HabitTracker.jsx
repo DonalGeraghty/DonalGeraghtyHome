@@ -2,7 +2,8 @@ import React, { useCallback, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useHabitData } from '../context/HabitDataContext'
-import { CATEGORY_LABELS, HABITS } from '../habits/habitConfig'
+import { CATEGORY_LABELS } from '../habits/habitConfig'
+import HabitManagerModal from '../components/HabitManagerModal'
 import {
   isFutureYmd,
   isTodayYmd,
@@ -33,8 +34,9 @@ function shortDate(ymd) {
 function HabitTracker() {
   const { user } = useAuth()
   const email = user?.email || ''
-  const { cells, loading, error, saving, reload, cycleCell, getCell } = useHabitData()
+  const { cells, habits, loading, error, saving, reload, cycleCell, getCell } = useHabitData()
   const [weekOffset, setWeekOffset] = useState(0)
+  const [showManager, setShowManager] = useState(false)
 
   const now = new Date()
   const anchorDate = useMemo(() => {
@@ -56,18 +58,18 @@ function HabitTracker() {
   )
 
   const { eligible, done, pct } = useMemo(
-    () => weekScore(cells, weekYmds, now),
-    [cells, weekYmds, now]
+    () => weekScore(cells, weekYmds, habits, now),
+    [cells, weekYmds, habits, now]
   )
-  const bestStreak = useMemo(() => computeBestStreakDays(cells, now), [cells, now])
-  const currentStreak = useMemo(() => computeCurrentStreakDays(cells, now), [cells, now])
+  const bestStreak = useMemo(() => computeBestStreakDays(cells, habits, now), [cells, habits, now])
+  const currentStreak = useMemo(() => computeCurrentStreakDays(cells, habits, now), [cells, habits, now])
   const { habit: missedTop, score: missedScore } = useMemo(
-    () => mostMissedHabitInWeek(cells, weekYmds, now),
-    [cells, weekYmds, now]
+    () => mostMissedHabitInWeek(cells, weekYmds, habits, now),
+    [cells, weekYmds, habits, now]
   )
   const financeRatio = useMemo(
-    () => financeHabitWeekRatio(cells, weekYmds, now),
-    [cells, weekYmds, now]
+    () => financeHabitWeekRatio(cells, weekYmds, habits, now),
+    [cells, weekYmds, habits, now]
   )
 
   const motivation = useMemo(() => {
@@ -134,6 +136,17 @@ function HabitTracker() {
           </p>
         </section>
 
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem' }}>
+          <button
+            type="button"
+            className="habit-nav-btn"
+            style={{ fontWeight: 'bold' }}
+            onClick={() => setShowManager(true)}
+          >
+            ⚙️ Manage Habits
+          </button>
+        </div>
+
         <div className="habit-week-nav">
           <button
             type="button"
@@ -183,7 +196,13 @@ function HabitTracker() {
               </tr>
             </thead>
             <tbody>
-              {HABITS.map((h) => (
+              {!habits || habits.length === 0 ? (
+                <tr>
+                  <td colSpan={8} style={{ textAlign: 'center', padding: '2rem' }}>
+                    No habits defined yet. Click <strong>Manage Habits</strong> to add some!
+                  </td>
+                </tr>
+              ) : habits.map((h) => (
                 <tr key={h.id}>
                   <th scope="row" className="habit-row-label">
                     <span className="habit-name">{h.label}</span>
@@ -251,6 +270,10 @@ function HabitTracker() {
           </Link>
         </p>
       </div>
+
+      {showManager && (
+        <HabitManagerModal onClose={() => setShowManager(false)} />
+      )}
     </main>
   )
 }

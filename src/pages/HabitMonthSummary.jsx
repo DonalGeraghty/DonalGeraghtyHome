@@ -5,7 +5,7 @@ import { monthWeeks, weekScore } from '../habits/habitStats'
 import './HabitMonthSummary.css'
 
 function HabitMonthSummary() {
-  const { cells, loading } = useHabitData()
+  const { cells, habits, loading } = useHabitData()
   const now = new Date()
   const [cursor, setCursor] = useState(() => new Date(now.getFullYear(), now.getMonth(), 1))
 
@@ -17,12 +17,12 @@ function HabitMonthSummary() {
 
   const rows = useMemo(() => {
     return weeks.map((w, i) => {
-      const { pct, done, eligible } = weekScore(cells, w.ymds, now)
+      const { pct, done, eligible } = weekScore(cells, w.ymds, habits, now)
       const start = w.ymds[0]
       const end = w.ymds[6]
       return { key: `${start}_${i}`, start, end, pct, done, eligible }
     })
-  }, [weeks, cells, now])
+  }, [weeks, cells, habits, now])
 
   const monthAvg = useMemo(() => {
     if (!rows.length) return 0

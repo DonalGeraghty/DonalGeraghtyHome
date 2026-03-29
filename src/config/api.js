@@ -8,6 +8,8 @@ export const API_ENDPOINTS = {
   HABITS_GET: '/api/habits',
   HABITS_PUT: '/api/habits',
   HABITS_PATCH_CELL: '/api/habits/cell',
+  USER_HABITS_GET: '/api/user/habits',
+  USER_HABITS_PUT: '/api/user/habits',
 }
 
 const TOKEN_KEY = 'dg_auth_token'

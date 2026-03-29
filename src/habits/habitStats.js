@@ -1,4 +1,3 @@
-import { HABITS } from './habitConfig'
 import {
   getCellFromCells,
   isPerfectDay,
@@ -11,12 +10,12 @@ import { formatYmd, isFutureYmd, parseYmd, startOfWeekMonday, weekYmdsFromMonday
  * @param {Record<string, string>} cells
  * @param {string[]} weekYmds Mon..Sun
  */
-export function weekScore(cells, weekYmds, now = new Date()) {
+export function weekScore(cells, weekYmds, habits, now = new Date()) {
   let eligible = 0
   let done = 0
   for (const ymd of weekYmds) {
     if (isFutureYmd(ymd, now)) continue
-    for (const h of HABITS) {
+    for (const h of habits) {
       eligible++
       if (getCellFromCells(cells, ymd, h.id) === 'done') done++
     }
@@ -26,32 +25,34 @@ export function weekScore(cells, weekYmds, now = new Date()) {
 }
 
 /** Most "missed" in week: weighted fail > none on past days. */
-export function mostMissedHabitInWeek(cells, weekYmds, now = new Date()) {
-  const counts = Object.fromEntries(HABITS.map((h) => [h.id, 0]))
+export function mostMissedHabitInWeek(cells, weekYmds, habits, now = new Date()) {
+  if (!habits || habits.length === 0) return { habit: null, score: 0 }
+  const counts = Object.fromEntries(habits.map((h) => [h.id, 0]))
   for (const ymd of weekYmds) {
     if (isFutureYmd(ymd, now)) continue
-    for (const h of HABITS) {
+    for (const h of habits) {
       const s = getCellFromCells(cells, ymd, h.id)
       if (s === 'fail') counts[h.id] += 2
       else if (s === 'none') counts[h.id] += 1
     }
   }
-  let bestId = HABITS[0].id
+  let bestId = habits[0].id
   let best = -1
-  for (const h of HABITS) {
+  for (const h of habits) {
     if (counts[h.id] > best) {
       best = counts[h.id]
       bestId = h.id
     }
   }
-  const habit = HABITS.find((x) => x.id === bestId)
+  const habit = habits.find((x) => x.id === bestId)
   return { habit, score: best }
 }
 
 /**
  * Longest run of consecutive calendar days where all habits done (from 2026-01-01 through `upTo`).
  */
-export function computeBestStreakDays(cells, upTo = new Date()) {
+export function computeBestStreakDays(cells, habits, upTo = new Date()) {
+  if (!habits || habits.length === 0) return 0
   const stateMap = listDateHabitMapFromCells(cells)
   const end = new Date(upTo.getFullYear(), upTo.getMonth(), upTo.getDate())
   const start = new Date(2026, 0, 1)
@@ -60,7 +61,7 @@ export function computeBestStreakDays(cells, upTo = new Date()) {
   for (let t = start.getTime(); t <= end.getTime(); t += 86400000) {
     const d = new Date(t)
     const ymd = formatYmd(d)
-    if (isPerfectDay(ymd, stateMap)) {
+    if (isPerfectDay(ymd, stateMap, habits)) {
       run++
       if (run > best) best = run
     } else {
@@ -70,7 +71,8 @@ export function computeBestStreakDays(cells, upTo = new Date()) {
   return best
 }
 
-export function computeCurrentStreakDays(cells, now = new Date()) {
+export function computeCurrentStreakDays(cells, habits, now = new Date()) {
+  if (!habits || habits.length === 0) return 0
   const stateMap = listDateHabitMapFromCells(cells)
   let run = 0
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
@@ -78,15 +80,16 @@ export function computeCurrentStreakDays(cells, now = new Date()) {
     const d = new Date(today)
     d.setDate(today.getDate() - i)
     const ymd = formatYmd(d)
-    if (isPerfectDay(ymd, stateMap)) run++
+    if (isPerfectDay(ymd, stateMap, habits)) run++
     else break
   }
   return run
 }
 
 /** Finance habits weekly done ratio (0–1) for motivation copy. */
-export function financeHabitWeekRatio(cells, weekYmds, now = new Date()) {
-  const financeIds = HABITS.filter((h) => h.category === 'finance').map((h) => h.id)
+export function financeHabitWeekRatio(cells, weekYmds, habits, now = new Date()) {
+  const financeIds = habits.filter((h) => h.category === 'finance').map((h) => h.id)
+  if (financeIds.length === 0) return 1
   let eligible = 0
   let done = 0
   for (const ymd of weekYmds) {
