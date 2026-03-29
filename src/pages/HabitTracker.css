@@ -66,15 +66,45 @@
   font-size: 0.9rem;
   line-height: 1.5;
   color: var(--text-secondary);
-  padding: 0.85rem 1rem;
+  padding: 1rem 1.25rem;
   border: 1px solid var(--border-color);
   border-radius: 6px;
   background: var(--bg-secondary);
+  text-align: center;
 }
 
-.habit-motivation strong {
+.habit-quote {
+  font-size: 1rem;
+  font-style: italic;
   color: var(--text-primary);
+  margin: 0 0 0.4rem;
+  line-height: 1.6;
+}
+
+.habit-quote-mark {
+  font-size: 1.4rem;
+  line-height: 0;
+  vertical-align: -0.2em;
+  color: var(--accent-color);
+  font-style: normal;
+  padding: 0 0.1em;
+}
+
+.habit-quote-author {
+  font-size: 0.8rem;
   font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+  margin: 0 0 0.6rem;
+  text-transform: uppercase;
+}
+
+.habit-quote-cta {
+  font-size: 0.85rem;
+  margin: 0.75rem 0 0;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border-color);
+  color: var(--text-secondary);
 }
 
 .habit-week-nav {
