@@ -1,115 +1,88 @@
 # Minerva (`minerva`)
 
-**Codename: Minerva** — Roman goddess of wisdom, strategic craft, and the arts. This repository is Donal Geraghty’s React/Vite **frontend**; what it hosts can evolve over time. Auth is handled by **Janus** (see the `janus-gate` backend on Cloud Run).
+**Codename: Minerva** — Roman goddess of wisdom, strategic craft, and the arts. This repository is Donal Geraghty’s **React / Vite frontend**. Auth is handled by **Janus** (the **janus-gate** Flask API on Google Cloud Run).
 
-## ✨ Features
+## Features
 
-### App features
-- **Project showcase**: Technical projects and skills (today: portfolio-style sections)
-- **Content sections**: Python, R Shiny, and web-related project write-ups
-- **Responsive Design**: Beautiful, modern design that works on all devices
-- **Theme Support**: Light/dark theme compatibility with smooth transitions
-- **Interactive Elements**: 3D background effects and smooth animations
+### App
+
+- **Project showcase**: Portfolio-style sections (Python, R Shiny, Java, web)
+- **Responsive layout**: Works across common screen sizes
+- **Themes**: Light / dark with smooth transitions
+- **Visual interest**: Three.js-based effects where used in the UI
 
 ### Authentication
-- **Sign in / register**: Main app routes are gated behind login
-- **JWT sessions**: Tokens issued by the Janus API (`src/config/api.js`)
 
-## 🚀 Live Demo
+- **Sign in / register**: Gated routes via splash / login flow
+- **JWT**: Tokens from the Janus API (`src/config/api.js`)
 
-- **Main App**: [Your Deployed URL]
+## Live URLs
+
+- **Frontend**: Set your deployed Minerva URL (e.g. Cloud Run or GitHub Pages) here when published.
 - **Auth API (Janus)**: [https://janus-gate-965419436472.europe-west1.run.app/](https://janus-gate-965419436472.europe-west1.run.app/)
 
-## 🛠️ Tech Stack
+## Tech stack
 
-### Frontend Technologies
-- **React 18**: Modern React with hooks and functional components
-- **Vite**: Fast build tool and development server
-- **React Router v6**: Client-side routing
-- **CSS3**: Modern styling with backdrop-filter, CSS Grid, Flexbox
-- **Three.js**: 3D background effects and animations
+| Area | Choice |
+|------|--------|
+| UI | React 18, Vite 5 |
+| Routing | React Router 7 |
+| 3D / motion | Three.js |
+| Tests | Vitest, Testing Library, jsdom |
+| Docs / dev UI | Storybook 8 |
+| Backend | Janus (Flask on Cloud Run), Firestore for users |
 
-### Backend Integration
-- **Janus API**: Flask REST service for registration, login, and JWT (`/api/auth/*`)
-- **Google Cloud Run**: Serverless container hosting
-- **Firestore**: User records (hashed passwords)
-- **Fetch API**: Centralized base URL in `src/config/api.js`
+**Dependencies**: use **`package.json`** / `package-lock.json`. This repo does not use Python for the app runtime (see `requirements.txt` for a short note only).
 
-### Development Tools
-- **Testing**: Jest and React Testing Library
-- **Storybook**: Component development and documentation
-- **Linting**: ESLint configuration
-- **Version Control**: Git with GitHub
-
-## 📁 Project Structure
+## Project structure
 
 ```
 src/
-├── components/          # Reusable UI components
-│   ├── ThemeToggle.jsx # Theme switching component
-│   ├── ThreeJSBackground.jsx # 3D background effects
-│   ├── SplashSection.jsx # Hero section component
-│   ├── AboutSection.jsx # About me section
-│   ├── SkillsSection.jsx # Skills showcase
-│   ├── PythonProjectsSection.jsx # Python projects
-│   ├── RShinyProjectsSection.jsx # R Shiny projects
-│   ├── ContactSection.jsx # Contact form
-│   ├── FooterSection.jsx # Footer component
-│   └── UserInfoSection.jsx # System information
-├── pages/              # Page components
-│   ├── Home.jsx        # Main landing page
-│   └── LoginSplash.jsx # Sign in / register
-├── context/            # React context providers
-│   ├── ThemeContext.jsx # Theme management
-│   └── AuthContext.jsx # Session and Janus API calls
-├── config/             # Configuration files
-│   └── api.js         # API endpoints and base URLs
-├── __tests__/          # Test files
-└── App.jsx            # Main application component
+├── components/       # UI sections, theme toggle, portfolio blocks
+├── context/          # ThemeProvider, AuthProvider (Janus API calls)
+├── config/           # api.js — API base URL and endpoints
+├── pages/            # Home, LoginSplash
+├── styles/           # shared.css
+├── App.jsx           # Router shell, navbar, route guards
+└── main.jsx          # Entry
 ```
 
-## 🚀 Getting Started
+## Getting started
 
 ### Prerequisites
 
-- Node.js (v16 or higher)
-- npm or yarn
+- **Node.js** 18 or newer (recommended for Vite 5)
+- **npm** (ships with Node)
 
-### Installation
+### Install and run
 
-1. **Clone the repository**
-   ```bash
-   git clone <your-repo-url>
-   cd minerva
-   ```
+```bash
+git clone <your-repo-url>
+cd minerva
+npm install
+npm run dev
+```
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
+Open [http://localhost:5173](http://localhost:5173).
 
-3. **Start development server**
-   ```bash
-   npm run dev
-   ```
+### Scripts
 
-4. **Open your browser**
-   Navigate to `http://localhost:5173`
+| Script | Purpose |
+|--------|---------|
+| `npm run dev` | Vite dev server |
+| `npm run build` | Production build → `dist/` |
+| `npm run preview` | Preview production build locally |
+| `npm run test` | Vitest |
+| `npm run test:ui` | Vitest UI |
+| `npm run test:coverage` | Coverage |
+| `npm run storybook` | Storybook dev server (port 6006) |
+| `npm run build-storybook` | Static Storybook build |
 
-### Available Scripts
+## Configuration
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run test` - Run test suite
-- `npm run storybook` - Start Storybook development server
-- `npm run build-storybook` - Build Storybook for production
+### API base URL
 
-## 🔧 Configuration
-
-### API Configuration
-
-The application uses a centralized API configuration in `src/config/api.js`:
+Centralized in `src/config/api.js`:
 
 ```javascript
 export const API_BASE_URL = 'https://janus-gate-965419436472.europe-west1.run.app'
@@ -121,181 +94,68 @@ export const API_ENDPOINTS = {
 }
 ```
 
-### Content / sections
+After redeploying Janus, update `API_BASE_URL` if the Cloud Run hostname changes.
 
-The app includes various sections that can be customized:
-- **Personal Information**: Update `AboutSection.jsx` with your details
-- **Skills**: Modify `SkillsSection.jsx` to showcase your expertise
-- **Projects**: Add new projects to `PythonProjectsSection.jsx` and `RShinyProjectsSection.jsx`
-- **Contact**: Update contact information in `ContactSection.jsx`
+### Environment variables (optional)
 
-### Environment Variables
-
-Create a `.env` file in the root directory for environment-specific configurations:
+Vite exposes only variables prefixed with `VITE_`. Example `.env`:
 
 ```env
-VITE_API_BASE_URL=https://your-api-url.com
+VITE_API_BASE_URL=https://your-janus-host.example
 VITE_APP_TITLE=DonalGeraghty
 ```
 
-## 📱 Usage
+Wire any `VITE_*` usage in code if you add them (the sample above is illustrative).
 
-1. Open the site and sign in or create an account on the splash screen.
-2. After authentication, browse the site (Home).
+## Janus API (backend)
 
-## 🌐 Janus API Endpoints
+Repository: **janus-gate**. Typical endpoints:
 
-Backend repo (codename **Janus**, GitHub **`janus-gate`**) exposes:
+| Method | Path | Purpose |
+|--------|------|---------|
+| `POST` | `/api/auth/register` | Body: `{ "email", "password" }` (password min 8 chars) |
+| `POST` | `/api/auth/login` | Same shape; returns JWT |
+| `GET` | `/api/auth/me` | Header: `Authorization: Bearer <token>` |
+| `GET` | `/health` | Health check |
 
-- **`POST /api/auth/register`** — JSON `{ "email", "password" }` (min 8 chars)
-- **`POST /api/auth/login`** — same shape; returns JWT
-- **`GET /api/auth/me`** — header `Authorization: Bearer <token>`
-- **`GET /health`** — health check
-
-### API Architecture
-
-- **Backend**: Flask on Cloud Run
-- **Database**: Firestore for users (in-memory fallback locally)
-- **Scaling**: Automatic scaling on demand
-
-## 🎨 Customization
-
-### Site & styling
-
-- **Personal information**: Update personal details, bio, and contact information
-- **Projects**: Add or change project cards, descriptions, and technologies
-- **Skills Section**: Customize skills, expertise levels, and categories
-- **Theme**: Modify color schemes and styling in `src/App.css`
-
-### Auth / API
-
-- **Base URL**: Set `API_BASE_URL` in `src/config/api.js` after Cloud Run deploys (hostname follows the service name).
-
-### Component Architecture
-
-All components are modular and can be easily customized or extended. Each component includes:
-
-- Responsive design
-- Accessibility features
-- Error boundaries
-- Loading states
-- Theme compatibility
-
-## 📚 Storybook
-
-This project includes Storybook for component development and documentation. Storybook provides an isolated environment to develop and test UI components.
-
-### Running Storybook
+## Storybook
 
 ```bash
-# Start Storybook development server
 npm run storybook
-
-# Build Storybook for production
-npm run build-storybook
 ```
 
-### Available Stories
+Stories live next to components (e.g. `ThemeToggle.stories.jsx`, `AboutSection.stories.jsx`, `Navbar.stories.jsx`).
 
-- **ThemeToggle**: Interactive theme switching component with light/dark mode examples
-- **AboutSection**: About section component
-- **SplashSection**: Hero section with animated elements and scroll functionality
-- **Navbar**: Navigation component with theme toggle and live time display
-
-### Storybook Features
-
-- **Interactive Controls**: Test different component states and props
-- **Theme Support**: Switch between light and dark themes
-- **Documentation**: Auto-generated documentation for each component
-- **Responsive Testing**: Test components at different screen sizes
-- **Accessibility**: Built-in accessibility testing tools
-
-### Adding New Stories
-
-To add a new story for a component:
-
-1. Create a `.stories.jsx` file next to your component
-2. Follow the existing story patterns for consistency
-3. Include interactive controls and documentation
-4. Test both light and dark theme variants
-
-## 🧪 Testing
-
-Run the test suite with:
+## Testing
 
 ```bash
 npm run test
 ```
 
-The project includes:
-- Unit tests for components
-- Integration tests for API calls
-- Test utilities and setup files
+Vitest is configured in `vite.config.js` (including `setupFiles` when present).
 
-## 📦 Deployment
+## Deployment
 
-### Build for Production
+- **Static / CDN**: `npm run build` and deploy the `dist/` output.
+- **Google Cloud Run**: Workflow `.github/workflows/deploy-gcp.yml` builds and deploys service **`minerva`** (project and registry names are defined in that workflow—confirm URLs in the GCP console after deploy).
 
-```bash
-npm run build
-```
-
-### Frontend Deployment Options
-
-- **Vercel**: Connect your GitHub repository for automatic deployments
-- **Netlify**: Drag and drop the `dist` folder
-- **GitHub Pages**: Use GitHub Actions for automated deployment
-- **AWS S3 + CloudFront**: For enterprise deployments
-
-### Frontend (this repo) on Google Cloud Run
-
-The GitHub Action `.github/workflows/deploy-gcp.yml` deploys **Minerva** as Cloud Run service **`minerva`** and pushes images to Artifact Registry repository **`minerva`**. The GCP **project** id stays `donal-geraghty-home`. After renaming from an older service name, confirm the new service URL in the Google Cloud console.
-
-### Backend Deployment
-
-The **Janus** API is deployed on **Google Cloud Run** (service name `janus-gate` in the backend workflow):
-- **Containerization**: Docker-based deployment
-- **Auto-scaling**: Automatic scaling based on traffic
-- **Global CDN**: Fast response times worldwide
-- **Monitoring**: Built-in logging and monitoring
+The **Janus** API deploys from the **janus-gate** repo (its own Dockerfile and GitHub Actions).
 
 ## GitHub repository name
 
-Rename the repository on GitHub to **`minerva`** (Settings → General → Repository name), then point your local remote at it:
+If you rename the repo to **`minerva`**, update the remote:
 
 ```bash
 git remote set-url origin https://github.com/<you>/minerva.git
 ```
 
-## 🤝 Contributing
+## Contributing
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+1. Fork the repository  
+2. Create a branch (`git checkout -b feature/your-change`)  
+3. Commit and push  
+4. Open a pull request  
 
-## 📄 License
+## Acknowledgments
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- **React team** for the amazing framework
-- **Vite team** for the fast build tool
-- **Google Cloud Run** for hosting the API
-- **Firestore** for the NoSQL database solution
-- **Flask** for the Python web framework
-- **The open-source community** for inspiration and tools
-
-## 📞 Support
-
-If you have any questions or need help:
-
-- Create an issue in the GitHub repository
-- Contact the development team
-- Check the documentation and examples
-
----
-
-**Built with ❤️ using React, Flask, and modern web technologies**
+React, Vite, Vitest, Storybook, Three.js, and the Janus / Cloud Run stack used for auth.
