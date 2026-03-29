@@ -9,11 +9,13 @@ import {
 } from 'react-router-dom'
 import './App.css'
 import './components/Navbar.css'
-import Home from './pages/Home'
+import HabitTracker from './pages/HabitTracker'
+import HabitMonthSummary from './pages/HabitMonthSummary'
 import LoginSplash from './pages/LoginSplash'
 import ThemeToggle from './components/ThemeToggle'
 import { ThemeProvider } from './context/ThemeContext'
 import { AuthProvider, useAuth } from './context/AuthContext'
+import { HabitDataProvider } from './context/HabitDataContext'
 
 function Navbar() {
   const [currentTime, setCurrentTime] = useState(new Date())
@@ -39,7 +41,7 @@ function Navbar() {
     <nav className="navbar">
       <div className="nav-container">
         <div className="nav-logo">
-          <h2>DonalGeraghty</h2>
+          <h2>Habits</h2>
         </div>
         <div className="nav-links">
           <Link
@@ -47,7 +49,14 @@ function Navbar() {
             className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}
             onClick={scrollToTop}
           >
-            Home
+            Week
+          </Link>
+          <Link
+            to="/month"
+            className={`nav-link ${location.pathname === '/month' ? 'active' : ''}`}
+            onClick={scrollToTop}
+          >
+            Month
           </Link>
         </div>
         <div className="nav-right">
@@ -62,13 +71,13 @@ function Navbar() {
           <ThemeToggle />
           <div className="nav-time">
             <p>
-              {currentTime.toLocaleDateString('en-GB', {
+              {currentTime.toLocaleDateString('en-IE', {
                 weekday: 'short',
                 year: 'numeric',
                 month: 'short',
                 day: 'numeric',
               })}{' '}
-              {currentTime.toLocaleTimeString('en-GB', {
+              {currentTime.toLocaleTimeString('en-IE', {
                 hour12: false,
                 hour: '2-digit',
                 minute: '2-digit',
@@ -100,7 +109,9 @@ function ProtectedLayout() {
   return (
     <div className="app">
       <Navbar />
-      <Outlet />
+      <HabitDataProvider>
+        <Outlet />
+      </HabitDataProvider>
     </div>
   )
 }
@@ -109,7 +120,8 @@ function AppRoutes() {
   return (
     <Routes>
       <Route element={<ProtectedLayout />}>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<HabitTracker />} />
+        <Route path="/month" element={<HabitMonthSummary />} />
       </Route>
     </Routes>
   )

@@ -16,10 +16,7 @@
   font-size: 1rem;
 }
 
-/* Home Page */
-.home-page {
-  padding-top: 80px;
-}
+/* Authenticated pages add their own top padding for the fixed navbar */
 
 /* Container */
 .container {

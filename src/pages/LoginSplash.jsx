@@ -28,12 +28,12 @@ function LoginSplash() {
   return (
     <div className="login-splash">
       <div className="login-splash-top">
-        <h1 className="login-splash-brand">DonalGeraghty</h1>
+        <h1 className="login-splash-brand">Habit tracker</h1>
         <ThemeToggle />
       </div>
       <div className="login-splash-inner">
         <p className="login-splash-intro">
-          Sign in to continue.
+          Sign in to open your habit grid. Your progress is saved to your account via the Janus API.
         </p>
         <div className="login-splash-tabs" role="tablist">
           <button
