@@ -2,9 +2,7 @@
  * Date helpers for the habit grid (local calendar, Monday-start weeks).
  * Legacy localStorage keys (pre–API sync): habitV1_{encodeURIComponent(email)}_{YYYY-MM-DD}_{habitId}
  */
-import { HABITS } from './habitConfig'
 
-const HABIT_IDS = new Set(HABITS.map((h) => h.id))
 
 export function storagePrefix(email) {
   const e = (email || '').trim().toLowerCase()
@@ -69,7 +67,7 @@ export function exportLegacyLocalCells(email) {
       const m = /^(\d{4}-\d{2}-\d{2})_(.+)$/.exec(rest)
       if (!m) continue
       const [, dateStr, habitId] = m
-      if (!HABIT_IDS.has(habitId)) continue
+
       const v = localStorage.getItem(key)
       if (v === 'done' || v === 'fail') out[`${dateStr}_${habitId}`] = v
     }
