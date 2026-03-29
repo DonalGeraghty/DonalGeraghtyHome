@@ -73,6 +73,26 @@
   gap: 1rem;
 }
 
+.nav-user-email {
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 500;
+}
+
+button.nav-logout {
+  font-family: inherit;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+button.nav-logout:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
 .nav-time {
   background: rgba(255, 255, 255, 0.15);
   padding: 0.5rem 1rem;

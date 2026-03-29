@@ -1,0 +1,102 @@
+import React, { useState } from 'react'
+import ThemeToggle from '../components/ThemeToggle'
+import { useAuth } from '../context/AuthContext'
+import './LoginSplash.css'
+
+function LoginSplash() {
+  const { login, register } = useAuth()
+  const [mode, setMode] = useState('login')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState('')
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setError('')
+    setSubmitting(true)
+    try {
+      if (mode === 'login') await login(email, password)
+      else await register(email, password)
+    } catch (err) {
+      setError(err.message || 'Something went wrong')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  return (
+    <div className="login-splash">
+      <div className="login-splash-top">
+        <h1 className="login-splash-brand">DonalGeraghty</h1>
+        <ThemeToggle />
+      </div>
+      <div className="login-splash-inner">
+        <p className="login-splash-intro">
+          Sign in to view the portfolio and URL shortener.
+        </p>
+        <div className="login-splash-tabs" role="tablist">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={mode === 'login'}
+            className={mode === 'login' ? 'active' : ''}
+            onClick={() => {
+              setMode('login')
+              setError('')
+            }}
+          >
+            Sign in
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={mode === 'register'}
+            className={mode === 'register' ? 'active' : ''}
+            onClick={() => {
+              setMode('register')
+              setError('')
+            }}
+          >
+            Create account
+          </button>
+        </div>
+        <form className="login-splash-form" onSubmit={handleSubmit}>
+          <div className="login-splash-field">
+            <label htmlFor="splash-email">Email</label>
+            <input
+              id="splash-email"
+              type="email"
+              autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="login-splash-input"
+              placeholder="you@example.com"
+            />
+          </div>
+          <div className="login-splash-field">
+            <label htmlFor="splash-password">Password</label>
+            <input
+              id="splash-password"
+              type="password"
+              autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              minLength={mode === 'register' ? 8 : undefined}
+              className="login-splash-input"
+              placeholder={mode === 'register' ? 'At least 8 characters' : '••••••••'}
+            />
+          </div>
+          {error && <div className="login-splash-error">{error}</div>}
+          <button type="submit" className="login-splash-submit" disabled={submitting}>
+            {submitting ? 'Please wait…' : mode === 'login' ? 'Sign in' : 'Register'}
+          </button>
+        </form>
+      </div>
+    </div>
+  )
+}
+
+export default LoginSplash
