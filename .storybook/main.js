@@ -1,4 +1,5 @@
 /** @type { import('@storybook/react-vite').StorybookConfig } */
+// Storybook for Minerva frontend.
 const config = {
   stories: ['../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
   addons: [

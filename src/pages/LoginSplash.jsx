@@ -33,7 +33,7 @@ function LoginSplash() {
       </div>
       <div className="login-splash-inner">
         <p className="login-splash-intro">
-          Sign in to view the portfolio.
+          Sign in to continue.
         </p>
         <div className="login-splash-tabs" role="tablist">
           <button

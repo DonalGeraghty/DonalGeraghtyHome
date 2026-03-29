@@ -28,7 +28,7 @@ function PortfolioSection() {
                 Responsive design, Smooth animations, Modern UI/UX
               </div>
               <div className="portfolio-links">
-                <a href="https://github.com/DonalGeraghty/DonalGeraghtyHome" target="_blank" rel="noopener noreferrer">
+                <a href="https://github.com/DonalGeraghty/minerva" target="_blank" rel="noopener noreferrer">
                   GitHub Repository
                 </a>
               </div>

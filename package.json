@@ -1,8 +1,8 @@
 {
-  "name": "dgproject",
+  "name": "minerva",
   "version": "1.0.0",
   "type": "module",
-  "homepage": "https://DonalGeraghty.github.io/DonalGeraghtyHome",
+  "homepage": "https://DonalGeraghty.github.io/minerva",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -15,7 +15,7 @@
   },
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "Minerva — React/Vite frontend (Roman goddess codename). Donal Geraghty’s site; scope may change over time.",
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

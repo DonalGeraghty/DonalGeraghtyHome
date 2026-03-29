@@ -1,27 +1,24 @@
-# Donal Geraghty - Portfolio & URL Shortener
+# Minerva (`minerva`)
 
-A modern, responsive portfolio website featuring a URL shortening web application built with React and Vite. The portfolio showcases various projects including Python web applications, R Shiny dashboards, and a full-stack URL shortener service.
+**Codename: Minerva** — Roman goddess of wisdom, strategic craft, and the arts. This repository is Donal Geraghty’s React/Vite **frontend**; what it hosts can evolve over time. Auth is handled by **Janus** (see the `janus-gate` backend on Cloud Run).
 
 ## ✨ Features
 
-### Portfolio Features
-- **Professional Portfolio**: Showcase of technical projects and skills
-- **Project Showcase**: Detailed information about Python, R Shiny, and web development projects
+### App features
+- **Project showcase**: Technical projects and skills (today: portfolio-style sections)
+- **Content sections**: Python, R Shiny, and web-related project write-ups
 - **Responsive Design**: Beautiful, modern design that works on all devices
 - **Theme Support**: Light/dark theme compatibility with smooth transitions
 - **Interactive Elements**: 3D background effects and smooth animations
 
-### URL Shortener Features
-- **URL Shortening**: Convert long URLs into short, manageable links
-- **Automatic Redirects**: Seamless redirection from short URLs to original destinations
-- **Dynamic Domain Detection**: Automatically adapts to localhost and production environments
-- **Error Handling**: Comprehensive error handling with user-friendly messages
-- **Loading States**: Visual feedback during API operations
+### Authentication
+- **Sign in / register**: Main app routes are gated behind login
+- **JWT sessions**: Tokens issued by the Janus API (`src/config/api.js`)
 
 ## 🚀 Live Demo
 
 - **Main App**: [Your Deployed URL]
-- **API**: [https://url-shortener-api-965419436472.europe-west1.run.app/](https://url-shortener-api-965419436472.europe-west1.run.app/)
+- **Auth API (Janus)**: [https://janus-gate-965419436472.europe-west1.run.app/](https://janus-gate-965419436472.europe-west1.run.app/)
 
 ## 🛠️ Tech Stack
 
@@ -33,10 +30,10 @@ A modern, responsive portfolio website featuring a URL shortening web applicatio
 - **Three.js**: 3D background effects and animations
 
 ### Backend Integration
-- **Flask API**: Python-based REST API for URL shortening
+- **Janus API**: Flask REST service for registration, login, and JWT (`/api/auth/*`)
 - **Google Cloud Run**: Serverless container hosting
-- **Firestore**: NoSQL database for URL storage
-- **Fetch API**: HTTP client with centralized configuration
+- **Firestore**: User records (hashed passwords)
+- **Fetch API**: Centralized base URL in `src/config/api.js`
 
 ### Development Tools
 - **Testing**: Jest and React Testing Library
@@ -61,10 +58,10 @@ src/
 │   └── UserInfoSection.jsx # System information
 ├── pages/              # Page components
 │   ├── Home.jsx        # Main landing page
-│   ├── UrlShortener.jsx # URL shortening form
-│   └── UrlRedirect.jsx # Redirect handling page
+│   └── LoginSplash.jsx # Sign in / register
 ├── context/            # React context providers
-│   └── ThemeContext.jsx # Theme management
+│   ├── ThemeContext.jsx # Theme management
+│   └── AuthContext.jsx # Session and Janus API calls
 ├── config/             # Configuration files
 │   └── api.js         # API endpoints and base URLs
 ├── __tests__/          # Test files
@@ -83,7 +80,7 @@ src/
 1. **Clone the repository**
    ```bash
    git clone <your-repo-url>
-   cd DonalGeraghtyHome
+   cd minerva
    ```
 
 2. **Install dependencies**
@@ -115,17 +112,18 @@ src/
 The application uses a centralized API configuration in `src/config/api.js`:
 
 ```javascript
-export const API_BASE_URL = 'https://url-shortener-api-965419436472.us-central1.run.app'
+export const API_BASE_URL = 'https://janus-gate-965419436472.europe-west1.run.app'
 
 export const API_ENDPOINTS = {
-  CREATE_SHORT_URL: '/api/data',
-  GET_LONG_URL: '/api/url'
+  AUTH_REGISTER: '/api/auth/register',
+  AUTH_LOGIN: '/api/auth/login',
+  AUTH_ME: '/api/auth/me',
 }
 ```
 
-### Portfolio Configuration
+### Content / sections
 
-The portfolio includes various sections that can be customized:
+The app includes various sections that can be customized:
 - **Personal Information**: Update `AboutSection.jsx` with your details
 - **Skills**: Modify `SkillsSection.jsx` to showcase your expertise
 - **Projects**: Add new projects to `PythonProjectsSection.jsx` and `RShinyProjectsSection.jsx`
@@ -137,56 +135,41 @@ Create a `.env` file in the root directory for environment-specific configuratio
 
 ```env
 VITE_API_BASE_URL=https://your-api-url.com
-VITE_APP_TITLE=URL Shortener
+VITE_APP_TITLE=DonalGeraghty
 ```
 
 ## 📱 Usage
 
-### Creating Short URLs
+1. Open the site and sign in or create an account on the splash screen.
+2. After authentication, browse the site (Home).
 
-1. Navigate to the URL Shortener page
-2. Enter a long URL in the input field
-3. Click "Shorten URL"
-4. Copy the generated short URL
+## 🌐 Janus API Endpoints
 
-### Using Short URLs
+Backend repo (codename **Janus**, GitHub **`janus-gate`**) exposes:
 
-1. Share the short URL with others
-2. When someone visits the short URL, they're automatically redirected
-3. The redirect happens seamlessly with a loading indicator
-
-## 🌐 API Endpoints
-
-The URL shortener service provides the following REST API endpoints:
-
-- **`POST /api/data`**: Create a shortened URL
-  - Request body: `{"text": "https://example.com"}`
-  - Response: Short code (e.g., "d75277")
-
-- **`GET /api/url/{shortCode}`**: Get long URL from short code
-  - Response: `{"long_url": "https://example.com", "short_code": "d75277", "status": "success"}`
+- **`POST /api/auth/register`** — JSON `{ "email", "password" }` (min 8 chars)
+- **`POST /api/auth/login`** — same shape; returns JWT
+- **`GET /api/auth/me`** — header `Authorization: Bearer <token>`
+- **`GET /health`** — health check
 
 ### API Architecture
 
-- **Backend**: Flask-based Python API
-- **Database**: Google Firestore for URL storage
-- **Hosting**: Google Cloud Run for serverless deployment
-- **Scaling**: Automatic scaling based on demand
+- **Backend**: Flask on Cloud Run
+- **Database**: Firestore for users (in-memory fallback locally)
+- **Scaling**: Automatic scaling on demand
 
 ## 🎨 Customization
 
-### Portfolio Customization
+### Site & styling
 
-- **Personal Information**: Update personal details, bio, and contact information
-- **Project Showcase**: Add new projects, update descriptions, and modify technologies
+- **Personal information**: Update personal details, bio, and contact information
+- **Projects**: Add or change project cards, descriptions, and technologies
 - **Skills Section**: Customize skills, expertise levels, and categories
 - **Theme**: Modify color schemes and styling in `src/App.css`
 
-### URL Shortener Customization
+### Auth / API
 
-- **Styling**: The application uses CSS custom properties for theming
-- **API Configuration**: Update endpoints and base URLs in `src/config/api.js`
-- **Form Validation**: Customize input validation and error messages
+- **Base URL**: Set `API_BASE_URL` in `src/config/api.js` after Cloud Run deploys (hostname follows the service name).
 
 ### Component Architecture
 
@@ -215,7 +198,7 @@ npm run build-storybook
 ### Available Stories
 
 - **ThemeToggle**: Interactive theme switching component with light/dark mode examples
-- **AboutSection**: Portfolio about section component
+- **AboutSection**: About section component
 - **SplashSection**: Hero section with animated elements and scroll functionality
 - **Navbar**: Navigation component with theme toggle and live time display
 
@@ -264,13 +247,25 @@ npm run build
 - **GitHub Pages**: Use GitHub Actions for automated deployment
 - **AWS S3 + CloudFront**: For enterprise deployments
 
+### Frontend (this repo) on Google Cloud Run
+
+The GitHub Action `.github/workflows/deploy-gcp.yml` deploys **Minerva** as Cloud Run service **`minerva`** and pushes images to Artifact Registry repository **`minerva`**. The GCP **project** id stays `donal-geraghty-home`. After renaming from an older service name, confirm the new service URL in the Google Cloud console.
+
 ### Backend Deployment
 
-The URL shortener API is deployed on **Google Cloud Run**:
+The **Janus** API is deployed on **Google Cloud Run** (service name `janus-gate` in the backend workflow):
 - **Containerization**: Docker-based deployment
 - **Auto-scaling**: Automatic scaling based on traffic
 - **Global CDN**: Fast response times worldwide
 - **Monitoring**: Built-in logging and monitoring
+
+## GitHub repository name
+
+Rename the repository on GitHub to **`minerva`** (Settings → General → Repository name), then point your local remote at it:
+
+```bash
+git remote set-url origin https://github.com/<you>/minerva.git
+```
 
 ## 🤝 Contributing
 

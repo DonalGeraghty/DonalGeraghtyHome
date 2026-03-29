@@ -9,8 +9,9 @@ on:
 env:
   PROJECT_ID: donal-geraghty-home
   REGION: europe-west1
-  SERVICE_NAME: donal-geraghty-home
-  REPOSITORY: donal-geraghty-home
+  # Codename Minerva — Roman goddess of wisdom and the arts; Cloud Run + Artifact Registry id
+  SERVICE_NAME: minerva
+  REPOSITORY: minerva
 
 jobs:
   deploy:
@@ -92,7 +93,7 @@ jobs:
         gcloud artifacts repositories create ${{ env.REPOSITORY }} \
           --repository-format=docker \
           --location=${{ env.REGION }} \
-          --description="Docker repository for Donal Geraghty Home" \
+          --description="Minerva frontend — Docker images" \
           || echo "Repository already exists"
         
     - name: Configure Docker for Artifact Registry

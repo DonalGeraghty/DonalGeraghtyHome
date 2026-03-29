@@ -44,7 +44,7 @@ function PythonProjectsSection() {
               </div>
               <p>
                 <strong>REST Authentication Service</strong><br/>
-                Flask API on Google Cloud Run for portfolio login: registration and sign-in with password hashing, 
+                Flask API on Google Cloud Run for site login: registration and sign-in with password hashing, 
                 JWT session tokens, and Firestore-backed user storage.
               </p>
               <div className="project-tech">
@@ -55,7 +55,7 @@ function PythonProjectsSection() {
                 Firestore with in-memory fallback for local development, structured logging
               </div>
               <div className="project-links">
-                <a href="https://github.com/DonalGeraghty/url-shortener-api" target="_blank" rel="noopener noreferrer">
+                <a href="https://github.com/DonalGeraghty/janus-gate" target="_blank" rel="noopener noreferrer">
                   GitHub Repository
                 </a>
               </div>
