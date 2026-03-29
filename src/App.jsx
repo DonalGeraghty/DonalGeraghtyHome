@@ -19,22 +19,28 @@ import { HabitDataProvider } from './context/HabitDataContext'
 
 function Navbar() {
   const [currentTime, setCurrentTime] = useState(new Date())
+  const [menuOpen, setMenuOpen] = useState(false)
   const location = useLocation()
   const { user, logout } = useAuth()
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date())
-    }, 1000)
-
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000)
     return () => clearInterval(timer)
   }, [])
 
+  // Close menu on route change
+  useEffect(() => {
+    setMenuOpen(false)
+  }, [location.pathname])
+
   const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    })
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+    setMenuOpen(false)
+  }
+
+  const handleLogout = () => {
+    setMenuOpen(false)
+    logout()
   }
 
   return (
@@ -43,48 +49,64 @@ function Navbar() {
         <div className="nav-logo">
           <h2>Habits</h2>
         </div>
-        <div className="nav-links">
-          <Link
-            to="/"
-            className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}
-            onClick={scrollToTop}
-          >
+
+        {/* Desktop nav links */}
+        <div className="nav-links nav-links--desktop">
+          <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`} onClick={scrollToTop}>
             Week
           </Link>
-          <Link
-            to="/month"
-            className={`nav-link ${location.pathname === '/month' ? 'active' : ''}`}
-            onClick={scrollToTop}
-          >
+          <Link to="/month" className={`nav-link ${location.pathname === '/month' ? 'active' : ''}`} onClick={scrollToTop}>
             Month
           </Link>
         </div>
-        <div className="nav-right">
+
+        {/* Desktop right section */}
+        <div className="nav-right nav-right--desktop">
           {user?.email && (
-            <span className="nav-user-email" title={user.email}>
-              {user.email}
-            </span>
+            <span className="nav-user-email" title={user.email}>{user.email}</span>
           )}
-          <button type="button" className="nav-link nav-logout" onClick={logout}>
-            Sign out
-          </button>
+          <button type="button" className="nav-link nav-logout" onClick={logout}>Sign out</button>
           <ThemeToggle />
           <div className="nav-time">
             <p>
-              {currentTime.toLocaleDateString('en-IE', {
-                weekday: 'short',
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
-              })}{' '}
-              {currentTime.toLocaleTimeString('en-IE', {
-                hour12: false,
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-              })}
+              {currentTime.toLocaleDateString('en-IE', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}{' '}
+              {currentTime.toLocaleTimeString('en-IE', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' })}
             </p>
           </div>
+        </div>
+
+        {/* Mobile: theme toggle + hamburger always visible */}
+        <div className="nav-mobile-controls">
+          <ThemeToggle />
+          <button
+            className="nav-hamburger"
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((o) => !o)}
+          >
+            <span className={`nav-hamburger-icon ${menuOpen ? 'is-open' : ''}`} />
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile drawer */}
+      <div className={`nav-drawer ${menuOpen ? 'is-open' : ''}`} aria-hidden={!menuOpen}>
+        <Link to="/" className={`nav-drawer-link ${location.pathname === '/' ? 'active' : ''}`} onClick={scrollToTop}>
+          Week
+        </Link>
+        <Link to="/month" className={`nav-drawer-link ${location.pathname === '/month' ? 'active' : ''}`} onClick={scrollToTop}>
+          Month
+        </Link>
+        <hr className="nav-drawer-divider" />
+        {user?.email && (
+          <span className="nav-drawer-email">{user.email}</span>
+        )}
+        <button type="button" className="nav-drawer-link nav-drawer-logout" onClick={handleLogout}>
+          Sign out
+        </button>
+        <div className="nav-drawer-time">
+          {currentTime.toLocaleDateString('en-IE', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' })}{' '}
+          {currentTime.toLocaleTimeString('en-IE', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' })}
         </div>
       </div>
     </nav>
