@@ -5,21 +5,11 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.92) 0%, rgba(118, 75, 162, 0.92) 100%),
-    url('/chatgpt-image.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
 [data-theme='dark'] .login-splash {
-  background: linear-gradient(135deg, rgba(44, 62, 80, 0.92) 0%, rgba(52, 73, 94, 0.92) 100%),
-    url('/chatgpt-image.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
 }
 
 .login-splash-top {
@@ -142,7 +132,7 @@
 .login-splash-submit {
   width: 100%;
   padding: 0.95rem 1.5rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #5a6fd6 0%, #6a4190 100%);
   color: #fff;
   border: none;
   border-radius: 10px;

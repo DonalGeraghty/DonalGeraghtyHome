@@ -40,25 +40,21 @@ function PythonProjectsSection() {
                 <div className="project-icon-container">
                   <span className="python-logo">🐍</span>
                 </div>
-                <h3>URL Shortener API</h3>
+                <h3>Portfolio Auth API</h3>
               </div>
               <p>
-                <strong>High-Performance URL Shortening Service</strong><br/>
-                Developed a robust REST API service that converts long URLs into short, manageable links with automatic redirection. 
-                The system is built with Flask for rapid development, deployed on Google Cloud Run for automatic scaling, 
-                and uses Firestore as a NoSQL database for reliable URL storage and retrieval.
+                <strong>REST Authentication Service</strong><br/>
+                Flask API on Google Cloud Run for portfolio login: registration and sign-in with password hashing, 
+                JWT session tokens, and Firestore-backed user storage.
               </p>
               <div className="project-tech">
-                <strong>Technologies:</strong> Python, Flask, Google Cloud Run, Firestore, REST API, Cloud Native, NoSQL Database
+                <strong>Technologies:</strong> Python, Flask, Google Cloud Run, Firestore, JWT, REST API
               </div>
               <div className="project-features">
-                <strong>Key Features:</strong> URL shortening & redirection, Firestore integration, Cloud Run deployment, 
-                RESTful API design, Automatic scaling, High availability, Real-time database operations
+                <strong>Key Features:</strong> Secure password hashing, JWT issuance, CORS for the SPA, 
+                Firestore with in-memory fallback for local development, structured logging
               </div>
               <div className="project-links">
-                <a href="/urlshortener">
-                  URL Shortener
-                </a>
                 <a href="https://github.com/DonalGeraghty/url-shortener-api" target="_blank" rel="noopener noreferrer">
                   GitHub Repository
                 </a>

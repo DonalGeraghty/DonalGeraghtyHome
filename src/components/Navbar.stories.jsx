@@ -36,15 +36,6 @@ function Navbar() {
           >
             Home
           </button>
-          <button 
-            className={`nav-link ${location.pathname === '/urlshortener' ? 'active' : ''}`}
-            onClick={() => {
-              setLocation({ pathname: '/urlshortener' });
-              scrollToTop();
-            }}
-          >
-            URL Shortener
-          </button>
         </div>
         <div className="nav-right">
           <ThemeToggle />

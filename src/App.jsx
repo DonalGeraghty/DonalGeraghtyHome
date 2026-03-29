@@ -10,8 +10,6 @@ import {
 import './App.css'
 import './components/Navbar.css'
 import Home from './pages/Home'
-import UrlShortener from './pages/UrlShortener'
-import UrlRedirect from './pages/UrlRedirect'
 import LoginSplash from './pages/LoginSplash'
 import ThemeToggle from './components/ThemeToggle'
 import { ThemeProvider } from './context/ThemeContext'
@@ -50,13 +48,6 @@ function Navbar() {
             onClick={scrollToTop}
           >
             Home
-          </Link>
-          <Link
-            to="/urlshortener"
-            className={`nav-link ${location.pathname === '/urlshortener' ? 'active' : ''}`}
-            onClick={scrollToTop}
-          >
-            URL Shortener
           </Link>
         </div>
         <div className="nav-right">
@@ -117,10 +108,8 @@ function ProtectedLayout() {
 function AppRoutes() {
   return (
     <Routes>
-      <Route path="/redirect/:shortCode" element={<UrlRedirect />} />
       <Route element={<ProtectedLayout />}>
         <Route path="/" element={<Home />} />
-        <Route path="/urlshortener" element={<UrlShortener />} />
       </Route>
     </Routes>
   )

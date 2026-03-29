@@ -33,7 +33,7 @@ function LoginSplash() {
       </div>
       <div className="login-splash-inner">
         <p className="login-splash-intro">
-          Sign in to view the portfolio and URL shortener.
+          Sign in to view the portfolio.
         </p>
         <div className="login-splash-tabs" role="tablist">
           <button
