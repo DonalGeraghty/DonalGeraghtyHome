@@ -13,7 +13,6 @@ import {
 import {
   computeBestStreakDays,
   computeCurrentStreakDays,
-  financeHabitWeekRatio,
   mostMissedHabitInWeek,
   weekScore,
 } from '../habits/habitStats'
@@ -67,17 +66,6 @@ function HabitTracker() {
     () => mostMissedHabitInWeek(cells, weekYmds, habits, now),
     [cells, weekYmds, habits, now]
   )
-  const financeRatio = useMemo(
-    () => financeHabitWeekRatio(cells, weekYmds, habits, now),
-    [cells, weekYmds, habits, now]
-  )
-
-  const motivation = useMemo(() => {
-    const low = 150
-    const high = 200
-    const est = Math.round(low + (high - low) * financeRatio)
-    return { est, financeRatio }
-  }, [financeRatio])
 
   const weekTitle = useMemo(() => {
     const start = weekYmds[0]
@@ -127,13 +115,18 @@ function HabitTracker() {
 
         {saving && <p className="habit-saving">Saving…</p>}
 
-        <section className="habit-motivation" aria-label="Motivation">
-          <p>
-            Keeping the finance habits (Spar, weekly shop, Amazon, budget) on track can free roughly{' '}
-            <strong>€150–200/month</strong> on groceries alone. This week your finance habits are at about{' '}
-            <strong>{Math.round(motivation.financeRatio * 100)}%</strong> completion — roughly{' '}
-            <strong>€{motivation.est}</strong>/month equivalent if you sustain that pace (illustrative).
+        <section className="habit-motivation" aria-label="Daily quote">
+          <p className="habit-quote">
+            <span className="habit-quote-mark">&ldquo;</span>
+            We are what we repeatedly do. Excellence, then, is not an act, but a habit.
+            <span className="habit-quote-mark">&rdquo;</span>
           </p>
+          <p className="habit-quote-author">— Aristotle</p>
+          {habits.length === 0 && (
+            <p className="habit-quote-cta">
+              Get started by clicking <strong>⚙️ Manage Habits</strong> below to add your first habit.
+            </p>
+          )}
         </section>
 
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem' }}>
