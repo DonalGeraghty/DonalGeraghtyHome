@@ -11,6 +11,7 @@ import './App.css'
 import './components/Navbar.css'
 import HabitTracker from './pages/HabitTracker'
 import HabitMonthSummary from './pages/HabitMonthSummary'
+import Todos from './pages/Todos'
 import LoginSplash from './pages/LoginSplash'
 import ThemeToggle from './components/ThemeToggle'
 import { ThemeProvider } from './context/ThemeContext'
@@ -58,6 +59,9 @@ function Navbar() {
           <Link to="/month" className={`nav-link ${location.pathname === '/month' ? 'active' : ''}`} onClick={scrollToTop}>
             Month
           </Link>
+          <Link to="/todos" className={`nav-link ${location.pathname === '/todos' ? 'active' : ''}`} onClick={scrollToTop}>
+            Todos
+          </Link>
         </div>
 
         {/* Desktop right section */}
@@ -96,6 +100,9 @@ function Navbar() {
         </Link>
         <Link to="/month" className={`nav-drawer-link ${location.pathname === '/month' ? 'active' : ''}`} onClick={scrollToTop}>
           Month
+        </Link>
+        <Link to="/todos" className={`nav-drawer-link ${location.pathname === '/todos' ? 'active' : ''}`} onClick={scrollToTop}>
+          Todos
         </Link>
         <hr className="nav-drawer-divider" />
         {user?.email && (
@@ -144,6 +151,7 @@ function AppRoutes() {
       <Route element={<ProtectedLayout />}>
         <Route path="/" element={<HabitTracker />} />
         <Route path="/month" element={<HabitMonthSummary />} />
+        <Route path="/todos" element={<Todos />} />
       </Route>
     </Routes>
   )
