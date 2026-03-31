@@ -75,10 +75,10 @@ function Navbar() {
             Flashcards
           </Link>
           <Link to="/calories" className={`nav-link ${location.pathname === '/calories' ? 'active' : ''}`} onClick={scrollToTop}>
-            Flashcards
+            Calories
           </Link>
           <Link to="/stoic" className={`nav-link ${location.pathname === '/stoic' ? 'active' : ''}`} onClick={scrollToTop}>
-            Flashcards
+            Stoic
           </Link>
         </div>
 
