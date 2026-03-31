@@ -1,7 +1,8 @@
 import React, { useMemo, useState } from 'react'
 import { CATEGORY_LABELS } from '../habits/habitConfig'
 import {
-  buildContributionYearGrid,
+  CONTRIBUTION_DEFAULT_DAY_COUNT,
+  buildContributionGrid,
   cellBucket,
   computeHabitYearMetrics,
   doneIntensityForCell,
@@ -21,10 +22,31 @@ function formatTipDate(ymd) {
   })
 }
 
+function formatChartRangeLabel(startYmd, endYmd) {
+  const a = parseYmd(startYmd)
+  const b = parseYmd(endYmd)
+  if (Number.isNaN(a.getTime()) || Number.isNaN(b.getTime())) return ''
+  if (a.getTime() === b.getTime()) {
+    return a.toLocaleDateString('en-IE', { day: 'numeric', month: 'long', year: 'numeric' })
+  }
+  if (a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth()) {
+    return `${a.getDate()}–${b.getDate()} ${a.toLocaleDateString('en-IE', { month: 'long', year: 'numeric' })}`
+  }
+  return `${a.toLocaleDateString('en-IE', { day: 'numeric', month: 'short', year: 'numeric' })} – ${b.toLocaleDateString('en-IE', { day: 'numeric', month: 'short', year: 'numeric' })}`
+}
+
 function HabitContributionChart({ habit, cells, now = new Date() }) {
   const [tipLine, setTipLine] = useState(null)
 
-  const grid = useMemo(() => buildContributionYearGrid(now, 365), [now])
+  const grid = useMemo(
+    () => buildContributionGrid(now, CONTRIBUTION_DEFAULT_DAY_COUNT),
+    [now]
+  )
+
+  const rangeLabel = useMemo(
+    () => formatChartRangeLabel(grid.rangeStartYmd, grid.rangeEndYmd),
+    [grid.rangeEndYmd, grid.rangeStartYmd]
+  )
 
   const metrics = useMemo(
     () =>
@@ -42,7 +64,7 @@ function HabitContributionChart({ habit, cells, now = new Date() }) {
 
   return (
     <article
-      className="contrib-card"
+      className="contrib-card contrib-card--month"
       onMouseLeave={() => setTipLine(null)}
       aria-label={`Contribution graph for ${habit.label}`}
     >
@@ -50,8 +72,11 @@ function HabitContributionChart({ habit, cells, now = new Date() }) {
         <div>
           <p className="contrib-card-kicker">{habit.label}</p>
           <p className="contrib-card-metric">{metrics.totalDone}</p>
-          <p className="contrib-card-kicker" style={{ marginTop: '0.35rem' }}>
-            Completions in the last year
+          <p className="contrib-card-kicker contrib-card-range" style={{ marginTop: '0.35rem' }}>
+            {rangeLabel}
+          </p>
+          <p className="contrib-card-kicker" style={{ marginTop: '0.25rem' }}>
+            Completions in the last {CONTRIBUTION_DEFAULT_DAY_COUNT} days
           </p>
         </div>
         <span className={`contrib-cat ch-cat--${habit.category || 'mindset'}`}>
@@ -90,7 +115,7 @@ function HabitContributionChart({ habit, cells, now = new Date() }) {
                     let label = ''
                     if (bucket === 'inactive') {
                       cls += ' contrib-cell--inactive'
-                      label = future ? 'Future day' : 'Outside selected year window'
+                      label = future ? 'Future day' : 'Outside current range'
                     } else if (bucket === 'fail') {
                       cls += ' contrib-cell--fail'
                       label = 'Marked missed'

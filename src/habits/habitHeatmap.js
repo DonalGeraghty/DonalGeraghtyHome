@@ -8,6 +8,9 @@ function startOfDay(d) {
   return new Date(d.getFullYear(), d.getMonth(), d.getDate())
 }
 
+/** Default activity chart window: trailing ~1 month (inclusive). */
+export const CONTRIBUTION_DEFAULT_DAY_COUNT = 30
+
 /**
  * Build GitHub-style grid: columns = weeks (Mon-first), rows = Mon..Sun.
  * Covers the last `dayCount` calendar days ending on `now` (inclusive), padded to full weeks.
@@ -19,7 +22,7 @@ function startOfDay(d) {
  *   rangeEndYmd: string,
  * }}
  */
-export function buildContributionYearGrid(now = new Date(), dayCount = 365) {
+export function buildContributionGrid(now = new Date(), dayCount = CONTRIBUTION_DEFAULT_DAY_COUNT) {
   const today = startOfDay(now)
   const rangeEndYmd = formatYmd(today)
   const rangeStart = new Date(today)
@@ -44,9 +47,10 @@ export function buildContributionYearGrid(now = new Date(), dayCount = 365) {
     const colIndex = columns.length
     const monM = monday.getMonth()
     if (monM !== prevMonth) {
+      const short = monday.toLocaleDateString('en-IE', { month: 'short' })
       monthLabels.push({
         colIndex,
-        label: monday.toLocaleDateString('en-IE', { month: 'short' }).slice(0, 1),
+        label: dayCount <= 31 ? short : short.slice(0, 1),
       })
       prevMonth = monM
     }
