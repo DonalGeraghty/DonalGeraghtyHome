@@ -265,7 +265,7 @@ function Flashcards() {
     <main className="flashcards-page">
       <div className="flashcards-inner">
         <header className="flashcards-header">
-          <h1 className="flashcards-title">Hindi flashcards</h1>
+          <h1 className="flashcards-title">Flashcards</h1>
           <p className="flashcards-sub">Create groups, add cards, then study in randomized order.</p>
         </header>
 
