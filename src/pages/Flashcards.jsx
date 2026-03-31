@@ -349,6 +349,32 @@ function Flashcards() {
 
         <section className="flashcards-card">
           <h2>Study mode (random)</h2>
+          <div className="flashcards-study-selected-group">
+            <span className="flashcards-study-selected-label">Selected group:</span>
+            <strong className="flashcards-study-selected-name">
+              {selectedGroup ? selectedGroup.name : 'All groups'}
+            </strong>
+          </div>
+          <div className="flashcards-form-grid">
+            <select
+              className="flashcards-input"
+              value={selectedGroupId}
+              onChange={(e) => {
+                setSelectedGroupId(e.target.value)
+                setShowBack(false)
+              }}
+            >
+              {groups.length === 0 ? (
+                <option value="">No groups yet</option>
+              ) : (
+                groups.map((g) => (
+                  <option key={g.id} value={g.id}>
+                    {g.name}
+                  </option>
+                ))
+              )}
+            </select>
+          </div>
           <div className="flashcards-study-controls">
             <button type="button" className="flashcards-btn" onClick={() => void loadStudyCards('')}>
               Shuffle all groups
