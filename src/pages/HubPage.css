@@ -68,3 +68,38 @@
   color: var(--text-secondary);
   line-height: 1.5;
 }
+
+.hub-form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.hub-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.hub-field span {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.hub-input {
+  width: 100%;
+  font: inherit;
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 0.6rem 0.7rem;
+  line-height: 1.4;
+  resize: vertical;
+}
+
+.hub-input:focus {
+  outline: none;
+  border-color: var(--accent-color);
+}
