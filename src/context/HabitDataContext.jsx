@@ -127,6 +127,28 @@ export function HabitDataProvider({ children }) {
         })
         const data = await parseJsonSafe(res)
         if (!res.ok) {
+          // Backward-compatible fallback: some API variants reject "none" on PATCH
+          // but still support deletion via merge PUT with value "none".
+          if (state === 'none') {
+            const fallbackRes = await authFetch(API_ENDPOINTS.HABITS_PUT, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ cells: { [key]: 'none' } }),
+            })
+            const fallbackData = await parseJsonSafe(fallbackRes)
+            if (fallbackRes.ok) {
+              if (fallbackData.cells && typeof fallbackData.cells === 'object') {
+                setCells({ ...fallbackData.cells })
+              } else {
+                setCells((c) => {
+                  const copy = { ...c }
+                  delete copy[key]
+                  return copy
+                })
+              }
+              return true
+            }
+          }
           await load({ silent: true })
           throw new Error(data.error || `Save failed (${res.status})`)
         }
