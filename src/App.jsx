@@ -12,6 +12,8 @@ import './components/Navbar.css'
 import HabitTracker from './pages/HabitTracker'
 import HabitMonthSummary from './pages/HabitMonthSummary'
 import Todos from './pages/Todos'
+import Calories from './pages/Calories'
+import StoicJournal from './pages/StoicJournal'
 import LoginSplash from './pages/LoginSplash'
 import ThemeToggle from './components/ThemeToggle'
 import { ThemeProvider } from './context/ThemeContext'
@@ -62,6 +64,12 @@ function Navbar() {
           <Link to="/todos" className={`nav-link ${location.pathname === '/todos' ? 'active' : ''}`} onClick={scrollToTop}>
             Todos
           </Link>
+          <Link to="/calories" className={`nav-link ${location.pathname === '/calories' ? 'active' : ''}`} onClick={scrollToTop}>
+            Calories
+          </Link>
+          <Link to="/stoic" className={`nav-link ${location.pathname === '/stoic' ? 'active' : ''}`} onClick={scrollToTop}>
+            Stoic
+          </Link>
         </div>
 
         {/* Desktop right section */}
@@ -103,6 +111,12 @@ function Navbar() {
         </Link>
         <Link to="/todos" className={`nav-drawer-link ${location.pathname === '/todos' ? 'active' : ''}`} onClick={scrollToTop}>
           Todos
+        </Link>
+        <Link to="/calories" className={`nav-drawer-link ${location.pathname === '/calories' ? 'active' : ''}`} onClick={scrollToTop}>
+          Calories
+        </Link>
+        <Link to="/stoic" className={`nav-drawer-link ${location.pathname === '/stoic' ? 'active' : ''}`} onClick={scrollToTop}>
+          Stoic
         </Link>
         <hr className="nav-drawer-divider" />
         {user?.email && (
@@ -152,6 +166,8 @@ function AppRoutes() {
         <Route path="/" element={<HabitTracker />} />
         <Route path="/month" element={<HabitMonthSummary />} />
         <Route path="/todos" element={<Todos />} />
+        <Route path="/calories" element={<Calories />} />
+        <Route path="/stoic" element={<StoicJournal />} />
       </Route>
     </Routes>
   )
