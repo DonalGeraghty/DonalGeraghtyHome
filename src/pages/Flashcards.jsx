@@ -24,9 +24,13 @@ function Flashcards() {
   const [back, setBack] = useState('')
   const [savingGroup, setSavingGroup] = useState(false)
   const [savingCard, setSavingCard] = useState(false)
+  const [savingManage, setSavingManage] = useState(false)
   const [studyCards, setStudyCards] = useState([])
   const [studyIndex, setStudyIndex] = useState(0)
   const [showBack, setShowBack] = useState(false)
+  const [editingCardId, setEditingCardId] = useState('')
+  const [editFront, setEditFront] = useState('')
+  const [editBack, setEditBack] = useState('')
 
   const loadGroups = useCallback(async () => {
     if (!email) {
@@ -119,6 +123,107 @@ function Flashcards() {
       setSavingCard(false)
     }
   }, [selectedGroupId, front, back, savingCard])
+
+  const saveGroups = useCallback(async (nextGroups) => {
+    const res = await authFetch(API_ENDPOINTS.USER_FLASHCARDS, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ groups: nextGroups }),
+    })
+    const data = await parseJsonSafe(res)
+    if (!res.ok) throw new Error(data.error || `Could not save flashcards (${res.status})`)
+    return Array.isArray(data.groups) ? data.groups : []
+  }, [])
+
+  const beginEditCard = useCallback((card) => {
+    setEditingCardId(card.id)
+    setEditFront(card.front || '')
+    setEditBack(card.back || '')
+  }, [])
+
+  const cancelEditCard = useCallback(() => {
+    setEditingCardId('')
+    setEditFront('')
+    setEditBack('')
+  }, [])
+
+  const updateCard = useCallback(async () => {
+    if (!selectedGroupId || !editingCardId || savingManage) return
+    const trimmedFront = editFront.trim()
+    const trimmedBack = editBack.trim()
+    if (!trimmedFront || !trimmedBack) return
+
+    setSavingManage(true)
+    setError('')
+    try {
+      const nextGroups = groups.map((group) => {
+        if (group.id !== selectedGroupId) return group
+        return {
+          ...group,
+          cards: (group.cards || []).map((card) => (
+            card.id === editingCardId ? { ...card, front: trimmedFront, back: trimmedBack } : card
+          )),
+        }
+      })
+      const persisted = await saveGroups(nextGroups)
+      setGroups(persisted)
+      cancelEditCard()
+    } catch (e) {
+      setError(e.message || 'Failed to update card')
+    } finally {
+      setSavingManage(false)
+    }
+  }, [selectedGroupId, editingCardId, savingManage, editFront, editBack, groups, saveGroups, cancelEditCard])
+
+  const deleteCard = useCallback(async (cardId) => {
+    if (!selectedGroupId || !cardId || savingManage) return
+
+    setSavingManage(true)
+    setError('')
+    try {
+      const nextGroups = groups.map((group) => {
+        if (group.id !== selectedGroupId) return group
+        return {
+          ...group,
+          cards: (group.cards || []).filter((card) => card.id !== cardId),
+        }
+      })
+      const persisted = await saveGroups(nextGroups)
+      setGroups(persisted)
+      if (editingCardId === cardId) cancelEditCard()
+    } catch (e) {
+      setError(e.message || 'Failed to delete card')
+    } finally {
+      setSavingManage(false)
+    }
+  }, [selectedGroupId, savingManage, groups, saveGroups, editingCardId, cancelEditCard])
+
+  const deleteGroup = useCallback(async () => {
+    if (!selectedGroupId || savingManage) return
+    const targetGroup = groups.find((g) => g.id === selectedGroupId)
+    if (!targetGroup) return
+
+    const confirmed = window.confirm(`Delete group "${targetGroup.name}" and all its cards?`)
+    if (!confirmed) return
+
+    setSavingManage(true)
+    setError('')
+    try {
+      const nextGroups = groups.filter((group) => group.id !== selectedGroupId)
+      const persisted = await saveGroups(nextGroups)
+      setGroups(persisted)
+      cancelEditCard()
+      if (persisted.length > 0) {
+        setSelectedGroupId(persisted[0].id)
+      } else {
+        setSelectedGroupId('')
+      }
+    } catch (e) {
+      setError(e.message || 'Failed to delete group')
+    } finally {
+      setSavingManage(false)
+    }
+  }, [selectedGroupId, savingManage, groups, saveGroups, cancelEditCard])
 
   const loadStudyCards = useCallback(
     async (groupId = '') => {
@@ -240,6 +345,99 @@ function Flashcards() {
           <p className="flashcards-meta">
             {selectedGroup ? `${selectedGroup.name}: ${groupCardCount} cards` : 'Select a group to start'}
           </p>
+        </section>
+
+        <section className="flashcards-card">
+          <h2>Manage flashcards</h2>
+          <div className="flashcards-form-grid">
+            <select
+              className="flashcards-input"
+              value={selectedGroupId}
+              onChange={(e) => {
+                setSelectedGroupId(e.target.value)
+                cancelEditCard()
+              }}
+            >
+              {groups.length === 0 ? (
+                <option value="">No groups yet</option>
+              ) : (
+                groups.map((g) => (
+                  <option key={g.id} value={g.id}>
+                    {g.name}
+                  </option>
+                ))
+              )}
+            </select>
+            <button
+              type="button"
+              className="flashcards-btn danger"
+              onClick={() => void deleteGroup()}
+              disabled={!selectedGroupId || savingManage}
+            >
+              {savingManage ? 'Working…' : 'Delete selected group'}
+            </button>
+          </div>
+
+          {selectedGroup && Array.isArray(selectedGroup.cards) && selectedGroup.cards.length > 0 ? (
+            <div className="flashcards-grid">
+              {selectedGroup.cards.map((card) => (
+                <article key={card.id} className="flashcards-grid-card">
+                  {editingCardId === card.id ? (
+                    <>
+                      <label className="flashcards-edit-label">
+                        Front
+                        <input
+                          type="text"
+                          className="flashcards-input"
+                          value={editFront}
+                          onChange={(e) => setEditFront(e.target.value)}
+                          maxLength={240}
+                        />
+                      </label>
+                      <label className="flashcards-edit-label">
+                        Back
+                        <input
+                          type="text"
+                          className="flashcards-input"
+                          value={editBack}
+                          onChange={(e) => setEditBack(e.target.value)}
+                          maxLength={240}
+                        />
+                      </label>
+                      <div className="flashcards-grid-actions">
+                        <button
+                          type="button"
+                          className="flashcards-btn"
+                          onClick={() => void updateCard()}
+                          disabled={!editFront.trim() || !editBack.trim() || savingManage}
+                        >
+                          {savingManage ? 'Saving…' : 'Save'}
+                        </button>
+                        <button type="button" className="flashcards-btn ghost" onClick={cancelEditCard} disabled={savingManage}>
+                          Cancel
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <p className="flashcards-grid-side"><strong>Front:</strong> {card.front}</p>
+                      <p className="flashcards-grid-side"><strong>Back:</strong> {card.back}</p>
+                      <div className="flashcards-grid-actions">
+                        <button type="button" className="flashcards-btn ghost" onClick={() => beginEditCard(card)} disabled={savingManage}>
+                          Edit
+                        </button>
+                        <button type="button" className="flashcards-btn danger" onClick={() => void deleteCard(card.id)} disabled={savingManage}>
+                          Delete
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </article>
+              ))}
+            </div>
+          ) : (
+            <p className="flashcards-meta">No cards in this group yet.</p>
+          )}
         </section>
 
         <section className="flashcards-card">
