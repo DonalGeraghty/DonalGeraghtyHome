@@ -320,7 +320,7 @@ function Flashcards() {
             <input
               type="text"
               className="flashcards-input"
-              placeholder="Front (e.g. नमस्ते)"
+              placeholder="Front (e.g. Hello)"
               value={front}
               onChange={(e) => setFront(e.target.value)}
               maxLength={240}
@@ -328,7 +328,7 @@ function Flashcards() {
             <input
               type="text"
               className="flashcards-input"
-              placeholder="Back (e.g. Hello)"
+              placeholder="Back (e.g. नमस्ते)"
               value={back}
               onChange={(e) => setBack(e.target.value)}
               maxLength={240}
@@ -345,6 +345,51 @@ function Flashcards() {
           <p className="flashcards-meta">
             {selectedGroup ? `${selectedGroup.name}: ${groupCardCount} cards` : 'Select a group to start'}
           </p>
+        </section>
+
+        <section className="flashcards-card">
+          <h2>Study mode (random)</h2>
+          <div className="flashcards-study-controls">
+            <button type="button" className="flashcards-btn" onClick={() => void loadStudyCards('')}>
+              Shuffle all groups
+            </button>
+            <button
+              type="button"
+              className="flashcards-btn ghost"
+              onClick={() => void loadStudyCards(selectedGroupId)}
+              disabled={!selectedGroupId}
+            >
+              Shuffle selected group
+            </button>
+          </div>
+
+          {currentCard ? (
+            <div className="flashcards-study-card">
+              <p className="flashcards-study-group">{currentCard.groupName}</p>
+              <p className="flashcards-study-front">{currentCard.front}</p>
+              {showBack ? <p className="flashcards-study-back">{currentCard.back}</p> : null}
+              <div className="flashcards-study-actions">
+                <button type="button" className="flashcards-btn ghost" onClick={() => setShowBack((v) => !v)}>
+                  {showBack ? 'Hide answer' : 'Show answer'}
+                </button>
+                <button
+                  type="button"
+                  className="flashcards-btn"
+                  onClick={() => {
+                    setStudyIndex((i) => (i + 1 < studyCards.length ? i + 1 : 0))
+                    setShowBack(false)
+                  }}
+                >
+                  Next card
+                </button>
+              </div>
+              <p className="flashcards-meta">
+                Card {studyIndex + 1} of {studyCards.length}
+              </p>
+            </div>
+          ) : (
+            <p className="flashcards-meta">Click a shuffle button to begin.</p>
+          )}
         </section>
 
         <section className="flashcards-card">
@@ -437,51 +482,6 @@ function Flashcards() {
             </div>
           ) : (
             <p className="flashcards-meta">No cards in this group yet.</p>
-          )}
-        </section>
-
-        <section className="flashcards-card">
-          <h2>Study mode (random)</h2>
-          <div className="flashcards-study-controls">
-            <button type="button" className="flashcards-btn" onClick={() => void loadStudyCards('')}>
-              Shuffle all groups
-            </button>
-            <button
-              type="button"
-              className="flashcards-btn ghost"
-              onClick={() => void loadStudyCards(selectedGroupId)}
-              disabled={!selectedGroupId}
-            >
-              Shuffle selected group
-            </button>
-          </div>
-
-          {currentCard ? (
-            <div className="flashcards-study-card">
-              <p className="flashcards-study-group">{currentCard.groupName}</p>
-              <p className="flashcards-study-front">{currentCard.front}</p>
-              {showBack ? <p className="flashcards-study-back">{currentCard.back}</p> : null}
-              <div className="flashcards-study-actions">
-                <button type="button" className="flashcards-btn ghost" onClick={() => setShowBack((v) => !v)}>
-                  {showBack ? 'Hide answer' : 'Show answer'}
-                </button>
-                <button
-                  type="button"
-                  className="flashcards-btn"
-                  onClick={() => {
-                    setStudyIndex((i) => (i + 1 < studyCards.length ? i + 1 : 0))
-                    setShowBack(false)
-                  }}
-                >
-                  Next card
-                </button>
-              </div>
-              <p className="flashcards-meta">
-                Card {studyIndex + 1} of {studyCards.length}
-              </p>
-            </div>
-          ) : (
-            <p className="flashcards-meta">Click a shuffle button to begin.</p>
           )}
         </section>
 
