@@ -74,27 +74,12 @@ function Navbar() {
           <Link to="/flashcards" className={`nav-link ${location.pathname === '/flashcards' ? 'active' : ''}`} onClick={scrollToTop}>
             Flashcards
           </Link>
-          <div className="nav-dropdown-wrap">
-            <button
-              type="button"
-              className={`nav-link nav-dropdown-btn ${(location.pathname === '/calories' || location.pathname === '/stoic') ? 'active' : ''}`}
-              onClick={() => {
-                setMoreOpen((v) => !v)
-                setProfileOpen(false)
-              }}
-              aria-expanded={moreOpen}
-            >
-              More
-            </button>
-            <div className={`nav-dropdown-menu ${moreOpen ? 'is-open' : ''}`} aria-hidden={!moreOpen}>
-              <Link to="/calories" className={`nav-dropdown-link ${location.pathname === '/calories' ? 'active' : ''}`} onClick={scrollToTop}>
-                Calories
-              </Link>
-              <Link to="/stoic" className={`nav-dropdown-link ${location.pathname === '/stoic' ? 'active' : ''}`} onClick={scrollToTop}>
-                Stoic
-              </Link>
-            </div>
-          </div>
+          <Link to="/calories" className={`nav-link ${location.pathname === '/calories' ? 'active' : ''}`} onClick={scrollToTop}>
+            Flashcards
+          </Link>
+          <Link to="/stoic" className={`nav-link ${location.pathname === '/stoic' ? 'active' : ''}`} onClick={scrollToTop}>
+            Flashcards
+          </Link>
         </div>
 
         {/* Desktop right section */}
