@@ -146,7 +146,7 @@ export function HabitDataProvider({ children }) {
 
   const cycleCell = useCallback(async (dateStr, habitId) => {
     const cur = getCellFromCells(cellsRef.current, dateStr, habitId)
-    const next = cur === 'none' ? 'done' : cur === 'done' ? 'fail' : 'none'
+    const next = cur === 'done' ? 'none' : 'done'
     return patchCell(dateStr, habitId, next)
   }, [patchCell])
 

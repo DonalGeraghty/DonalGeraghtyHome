@@ -215,7 +215,7 @@ function HabitTracker() {
                           disabled={future || !email}
                           onClick={() => handleCell(ymd, h.id)}
                           aria-label={`${h.label} on ${ymd}: ${state}`}
-                          title={future ? 'Future day' : 'Tap: empty → done → missed → empty'}
+                          title={future ? 'Future day' : 'Tap: empty ↔ done'}
                         >
                           <span className="habit-cell-inner" aria-hidden />
                         </button>
