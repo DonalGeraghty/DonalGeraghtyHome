@@ -103,3 +103,38 @@
   outline: none;
   border-color: var(--accent-color);
 }
+
+.hub-chart-wrap {
+  margin-top: 0.5rem;
+}
+
+.hub-chart {
+  width: 100%;
+  height: auto;
+  display: block;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-tertiary);
+}
+
+.hub-chart-axis {
+  stroke: var(--border-color);
+  stroke-width: 1;
+}
+
+.hub-chart-line {
+  stroke: var(--accent-color);
+  stroke-width: 2;
+}
+
+.hub-chart-dot {
+  fill: var(--accent-color);
+}
+
+.hub-chart-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.35rem;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
