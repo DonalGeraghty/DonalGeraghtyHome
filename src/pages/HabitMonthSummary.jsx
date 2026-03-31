@@ -25,8 +25,8 @@ function HabitMonthSummary() {
         )}
 
         <p className="habit-month-lead">
-          Last <strong>30 days</strong> per habit — contribution-style grid (greens scale with streak length; orange is
-          a logged miss). Swipe sideways on small screens if the chart extends past the edge.
+          Last <strong>365 days</strong> per habit — same layout as a contribution graph (darker squares are fewer
+          completions; greens scale with streak length). Orange is a logged miss.
         </p>
 
         {!loading && habits.length === 0 && (

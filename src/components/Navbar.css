@@ -70,10 +70,8 @@ button.nav-logout:hover {
 /* ── Desktop nav links (centre) ── */
 .nav-links--desktop {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.65rem 1rem;
+  gap: 1.5rem;
   align-items: center;
-  justify-content: center;
 }
 
 /* ── Desktop right section ── */
@@ -179,7 +177,7 @@ button.nav-logout:hover {
 }
 
 .nav-drawer.is-open {
-  max-height: 520px;
+  max-height: 400px;
   padding: 0.75rem 1.25rem 1rem;
 }
 

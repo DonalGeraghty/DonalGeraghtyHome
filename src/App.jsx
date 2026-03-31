@@ -12,8 +12,6 @@ import './components/Navbar.css'
 import HabitTracker from './pages/HabitTracker'
 import HabitMonthSummary from './pages/HabitMonthSummary'
 import Todos from './pages/Todos'
-import Fitness from './pages/Fitness'
-import Food from './pages/Food'
 import LoginSplash from './pages/LoginSplash'
 import ThemeToggle from './components/ThemeToggle'
 import { ThemeProvider } from './context/ThemeContext'
@@ -64,12 +62,6 @@ function Navbar() {
           <Link to="/todos" className={`nav-link ${location.pathname === '/todos' ? 'active' : ''}`} onClick={scrollToTop}>
             Todos
           </Link>
-          <Link to="/fitness" className={`nav-link ${location.pathname === '/fitness' ? 'active' : ''}`} onClick={scrollToTop}>
-            Fitness
-          </Link>
-          <Link to="/food" className={`nav-link ${location.pathname === '/food' ? 'active' : ''}`} onClick={scrollToTop}>
-            Food
-          </Link>
         </div>
 
         {/* Desktop right section */}
@@ -111,12 +103,6 @@ function Navbar() {
         </Link>
         <Link to="/todos" className={`nav-drawer-link ${location.pathname === '/todos' ? 'active' : ''}`} onClick={scrollToTop}>
           Todos
-        </Link>
-        <Link to="/fitness" className={`nav-drawer-link ${location.pathname === '/fitness' ? 'active' : ''}`} onClick={scrollToTop}>
-          Fitness
-        </Link>
-        <Link to="/food" className={`nav-drawer-link ${location.pathname === '/food' ? 'active' : ''}`} onClick={scrollToTop}>
-          Food
         </Link>
         <hr className="nav-drawer-divider" />
         {user?.email && (
@@ -166,8 +152,6 @@ function AppRoutes() {
         <Route path="/" element={<HabitTracker />} />
         <Route path="/month" element={<HabitMonthSummary />} />
         <Route path="/todos" element={<Todos />} />
-        <Route path="/fitness" element={<Fitness />} />
-        <Route path="/food" element={<Food />} />
       </Route>
     </Routes>
   )
