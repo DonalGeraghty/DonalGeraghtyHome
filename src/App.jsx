@@ -12,6 +12,7 @@ import './components/Navbar.css'
 import HabitTracker from './pages/HabitTracker'
 import HabitMonthSummary from './pages/HabitMonthSummary'
 import Todos from './pages/Todos'
+import Flashcards from './pages/Flashcards'
 import Calories from './pages/Calories'
 import StoicJournal from './pages/StoicJournal'
 import LoginSplash from './pages/LoginSplash'
@@ -64,6 +65,9 @@ function Navbar() {
           <Link to="/todos" className={`nav-link ${location.pathname === '/todos' ? 'active' : ''}`} onClick={scrollToTop}>
             Todos
           </Link>
+          <Link to="/flashcards" className={`nav-link ${location.pathname === '/flashcards' ? 'active' : ''}`} onClick={scrollToTop}>
+            Flashcards
+          </Link>
           <Link to="/calories" className={`nav-link ${location.pathname === '/calories' ? 'active' : ''}`} onClick={scrollToTop}>
             Calories
           </Link>
@@ -111,6 +115,9 @@ function Navbar() {
         </Link>
         <Link to="/todos" className={`nav-drawer-link ${location.pathname === '/todos' ? 'active' : ''}`} onClick={scrollToTop}>
           Todos
+        </Link>
+        <Link to="/flashcards" className={`nav-drawer-link ${location.pathname === '/flashcards' ? 'active' : ''}`} onClick={scrollToTop}>
+          Flashcards
         </Link>
         <Link to="/calories" className={`nav-drawer-link ${location.pathname === '/calories' ? 'active' : ''}`} onClick={scrollToTop}>
           Calories
@@ -166,6 +173,7 @@ function AppRoutes() {
         <Route path="/" element={<HabitTracker />} />
         <Route path="/month" element={<HabitMonthSummary />} />
         <Route path="/todos" element={<Todos />} />
+        <Route path="/flashcards" element={<Flashcards />} />
         <Route path="/calories" element={<Calories />} />
         <Route path="/stoic" element={<StoicJournal />} />
       </Route>

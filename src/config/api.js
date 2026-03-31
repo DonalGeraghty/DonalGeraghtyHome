@@ -11,6 +11,10 @@ export const API_ENDPOINTS = {
   USER_HABITS_GET: '/api/user/habits',
   USER_HABITS_PUT: '/api/user/habits',
   USER_TODOS: '/api/user/todos',
+  USER_FLASHCARDS: '/api/user/flashcards',
+  USER_FLASHCARD_GROUPS: '/api/user/flashcards/groups',
+  USER_FLASHCARD_CARDS: '/api/user/flashcards/cards',
+  USER_FLASHCARD_STUDY: '/api/user/flashcards/study',
 }
 
 const TOKEN_KEY = 'dg_auth_token'

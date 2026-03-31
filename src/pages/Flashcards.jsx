@@ -1,0 +1,298 @@
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { useAuth } from '../context/AuthContext'
+import { API_ENDPOINTS, authFetch } from '../config/api'
+import './Flashcards.css'
+
+async function parseJsonSafe(res) {
+  try {
+    return await res.json()
+  } catch {
+    return {}
+  }
+}
+
+function Flashcards() {
+  const { user } = useAuth()
+  const email = user?.email || ''
+
+  const [groups, setGroups] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [groupName, setGroupName] = useState('')
+  const [selectedGroupId, setSelectedGroupId] = useState('')
+  const [front, setFront] = useState('')
+  const [back, setBack] = useState('')
+  const [savingGroup, setSavingGroup] = useState(false)
+  const [savingCard, setSavingCard] = useState(false)
+  const [studyCards, setStudyCards] = useState([])
+  const [studyIndex, setStudyIndex] = useState(0)
+  const [showBack, setShowBack] = useState(false)
+
+  const loadGroups = useCallback(async () => {
+    if (!email) {
+      setGroups([])
+      setLoading(false)
+      return
+    }
+
+    setLoading(true)
+    setError('')
+    try {
+      const res = await authFetch(API_ENDPOINTS.USER_FLASHCARDS, { method: 'GET' })
+      const data = await parseJsonSafe(res)
+      if (!res.ok) throw new Error(data.error || `Could not load flashcards (${res.status})`)
+      const nextGroups = Array.isArray(data.groups) ? data.groups : []
+      setGroups(nextGroups)
+      if (nextGroups.length > 0 && !selectedGroupId) {
+        setSelectedGroupId(nextGroups[0].id)
+      }
+    } catch (e) {
+      setError(e.message || 'Failed to load flashcards')
+      setGroups([])
+    } finally {
+      setLoading(false)
+    }
+  }, [email, selectedGroupId])
+
+  useEffect(() => {
+    void loadGroups()
+  }, [loadGroups])
+
+  useEffect(() => {
+    if (!selectedGroupId && groups.length > 0) {
+      setSelectedGroupId(groups[0].id)
+    }
+  }, [groups, selectedGroupId])
+
+  const addGroup = useCallback(async () => {
+    const trimmed = groupName.trim()
+    if (!trimmed || savingGroup) return
+
+    setSavingGroup(true)
+    setError('')
+    try {
+      const res = await authFetch(API_ENDPOINTS.USER_FLASHCARD_GROUPS, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: trimmed }),
+      })
+      const data = await parseJsonSafe(res)
+      if (!res.ok) throw new Error(data.error || `Could not add group (${res.status})`)
+      const nextGroups = Array.isArray(data.groups) ? data.groups : []
+      setGroups(nextGroups)
+      if (nextGroups.length > 0) {
+        setSelectedGroupId(nextGroups[nextGroups.length - 1].id)
+      }
+      setGroupName('')
+    } catch (e) {
+      setError(e.message || 'Failed to add group')
+    } finally {
+      setSavingGroup(false)
+    }
+  }, [groupName, savingGroup])
+
+  const addCard = useCallback(async () => {
+    const trimmedFront = front.trim()
+    const trimmedBack = back.trim()
+    if (!selectedGroupId || !trimmedFront || !trimmedBack || savingCard) return
+
+    setSavingCard(true)
+    setError('')
+    try {
+      const res = await authFetch(API_ENDPOINTS.USER_FLASHCARD_CARDS, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          groupId: selectedGroupId,
+          front: trimmedFront,
+          back: trimmedBack,
+        }),
+      })
+      const data = await parseJsonSafe(res)
+      if (!res.ok) throw new Error(data.error || `Could not add flashcard (${res.status})`)
+      if (Array.isArray(data.groups)) setGroups(data.groups)
+      setFront('')
+      setBack('')
+    } catch (e) {
+      setError(e.message || 'Failed to add card')
+    } finally {
+      setSavingCard(false)
+    }
+  }, [selectedGroupId, front, back, savingCard])
+
+  const loadStudyCards = useCallback(
+    async (groupId = '') => {
+      setError('')
+      try {
+        const query = groupId ? `?groupId=${encodeURIComponent(groupId)}` : ''
+        const res = await authFetch(`${API_ENDPOINTS.USER_FLASHCARD_STUDY}${query}`, { method: 'GET' })
+        const data = await parseJsonSafe(res)
+        if (!res.ok) throw new Error(data.error || `Could not load study cards (${res.status})`)
+        const cards = Array.isArray(data.cards) ? data.cards : []
+        setStudyCards(cards)
+        setStudyIndex(0)
+        setShowBack(false)
+      } catch (e) {
+        setError(e.message || 'Failed to load study cards')
+        setStudyCards([])
+      }
+    },
+    []
+  )
+
+  const currentCard = studyCards[studyIndex] || null
+  const selectedGroup = useMemo(() => groups.find((g) => g.id === selectedGroupId) || null, [groups, selectedGroupId])
+  const groupCardCount = selectedGroup?.cards?.length || 0
+
+  if (loading) {
+    return (
+      <main className="flashcards-page">
+        <div className="flashcards-inner">
+          <p className="flashcards-loading" role="status">
+            Loading your flashcards…
+          </p>
+        </div>
+      </main>
+    )
+  }
+
+  return (
+    <main className="flashcards-page">
+      <div className="flashcards-inner">
+        <header className="flashcards-header">
+          <h1 className="flashcards-title">Hindi flashcards</h1>
+          <p className="flashcards-sub">Create groups, add cards, then study in randomized order.</p>
+        </header>
+
+        {error && (
+          <div className="flashcards-error" role="alert">
+            {error}
+          </div>
+        )}
+
+        <section className="flashcards-card">
+          <h2>Create group</h2>
+          <form
+            className="flashcards-form-row"
+            onSubmit={(e) => {
+              e.preventDefault()
+              void addGroup()
+            }}
+          >
+            <input
+              type="text"
+              className="flashcards-input"
+              placeholder="e.g. Numbers, Greetings, Verbs"
+              value={groupName}
+              onChange={(e) => setGroupName(e.target.value)}
+              maxLength={80}
+            />
+            <button type="submit" className="flashcards-btn" disabled={!groupName.trim() || savingGroup}>
+              {savingGroup ? 'Adding…' : 'Add group'}
+            </button>
+          </form>
+        </section>
+
+        <section className="flashcards-card">
+          <h2>Add flashcard</h2>
+          <div className="flashcards-form-grid">
+            <select
+              className="flashcards-input"
+              value={selectedGroupId}
+              onChange={(e) => setSelectedGroupId(e.target.value)}
+            >
+              {groups.length === 0 ? (
+                <option value="">No groups yet</option>
+              ) : (
+                groups.map((g) => (
+                  <option key={g.id} value={g.id}>
+                    {g.name}
+                  </option>
+                ))
+              )}
+            </select>
+
+            <input
+              type="text"
+              className="flashcards-input"
+              placeholder="Front (e.g. नमस्ते)"
+              value={front}
+              onChange={(e) => setFront(e.target.value)}
+              maxLength={240}
+            />
+            <input
+              type="text"
+              className="flashcards-input"
+              placeholder="Back (e.g. Hello)"
+              value={back}
+              onChange={(e) => setBack(e.target.value)}
+              maxLength={240}
+            />
+            <button
+              type="button"
+              className="flashcards-btn"
+              onClick={() => void addCard()}
+              disabled={!selectedGroupId || !front.trim() || !back.trim() || savingCard}
+            >
+              {savingCard ? 'Adding…' : 'Add card'}
+            </button>
+          </div>
+          <p className="flashcards-meta">
+            {selectedGroup ? `${selectedGroup.name}: ${groupCardCount} cards` : 'Select a group to start'}
+          </p>
+        </section>
+
+        <section className="flashcards-card">
+          <h2>Study mode (random)</h2>
+          <div className="flashcards-study-controls">
+            <button type="button" className="flashcards-btn" onClick={() => void loadStudyCards('')}>
+              Shuffle all groups
+            </button>
+            <button
+              type="button"
+              className="flashcards-btn ghost"
+              onClick={() => void loadStudyCards(selectedGroupId)}
+              disabled={!selectedGroupId}
+            >
+              Shuffle selected group
+            </button>
+          </div>
+
+          {currentCard ? (
+            <div className="flashcards-study-card">
+              <p className="flashcards-study-group">{currentCard.groupName}</p>
+              <p className="flashcards-study-front">{currentCard.front}</p>
+              {showBack ? <p className="flashcards-study-back">{currentCard.back}</p> : null}
+              <div className="flashcards-study-actions">
+                <button type="button" className="flashcards-btn ghost" onClick={() => setShowBack((v) => !v)}>
+                  {showBack ? 'Hide answer' : 'Show answer'}
+                </button>
+                <button
+                  type="button"
+                  className="flashcards-btn"
+                  onClick={() => {
+                    setStudyIndex((i) => (i + 1 < studyCards.length ? i + 1 : 0))
+                    setShowBack(false)
+                  }}
+                >
+                  Next card
+                </button>
+              </div>
+              <p className="flashcards-meta">
+                Card {studyIndex + 1} of {studyCards.length}
+              </p>
+            </div>
+          ) : (
+            <p className="flashcards-meta">Click a shuffle button to begin.</p>
+          )}
+        </section>
+
+        <p className="flashcards-footnote">
+          Signed in as <code>{email}</code>
+        </p>
+      </div>
+    </main>
+  )
+}
+
+export default Flashcards
