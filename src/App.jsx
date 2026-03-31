@@ -24,6 +24,8 @@ import { HabitDataProvider } from './context/HabitDataContext'
 function Navbar() {
   const [currentTime, setCurrentTime] = useState(new Date())
   const [menuOpen, setMenuOpen] = useState(false)
+  const [moreOpen, setMoreOpen] = useState(false)
+  const [profileOpen, setProfileOpen] = useState(false)
   const location = useLocation()
   const { user, logout } = useAuth()
 
@@ -35,6 +37,8 @@ function Navbar() {
   // Close menu on route change
   useEffect(() => {
     setMenuOpen(false)
+    setMoreOpen(false)
+    setProfileOpen(false)
   }, [location.pathname])
 
   const scrollToTop = () => {
@@ -44,6 +48,8 @@ function Navbar() {
 
   const handleLogout = () => {
     setMenuOpen(false)
+    setMoreOpen(false)
+    setProfileOpen(false)
     logout()
   }
 
@@ -68,26 +74,56 @@ function Navbar() {
           <Link to="/flashcards" className={`nav-link ${location.pathname === '/flashcards' ? 'active' : ''}`} onClick={scrollToTop}>
             Flashcards
           </Link>
-          <Link to="/calories" className={`nav-link ${location.pathname === '/calories' ? 'active' : ''}`} onClick={scrollToTop}>
-            Calories
-          </Link>
-          <Link to="/stoic" className={`nav-link ${location.pathname === '/stoic' ? 'active' : ''}`} onClick={scrollToTop}>
-            Stoic
-          </Link>
+          <div className="nav-dropdown-wrap">
+            <button
+              type="button"
+              className={`nav-link nav-dropdown-btn ${(location.pathname === '/calories' || location.pathname === '/stoic') ? 'active' : ''}`}
+              onClick={() => {
+                setMoreOpen((v) => !v)
+                setProfileOpen(false)
+              }}
+              aria-expanded={moreOpen}
+            >
+              More
+            </button>
+            <div className={`nav-dropdown-menu ${moreOpen ? 'is-open' : ''}`} aria-hidden={!moreOpen}>
+              <Link to="/calories" className={`nav-dropdown-link ${location.pathname === '/calories' ? 'active' : ''}`} onClick={scrollToTop}>
+                Calories
+              </Link>
+              <Link to="/stoic" className={`nav-dropdown-link ${location.pathname === '/stoic' ? 'active' : ''}`} onClick={scrollToTop}>
+                Stoic
+              </Link>
+            </div>
+          </div>
         </div>
 
         {/* Desktop right section */}
         <div className="nav-right nav-right--desktop">
-          {user?.email && (
-            <span className="nav-user-email" title={user.email}>{user.email}</span>
-          )}
-          <button type="button" className="nav-link nav-logout" onClick={logout}>Sign out</button>
-          <ThemeToggle />
-          <div className="nav-time">
-            <p>
-              {currentTime.toLocaleDateString('en-IE', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}{' '}
-              {currentTime.toLocaleTimeString('en-IE', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' })}
-            </p>
+          <p className="nav-time-muted">
+            {currentTime.toLocaleDateString('en-IE', { weekday: 'short', month: 'short', day: 'numeric' })}{' '}
+            {currentTime.toLocaleTimeString('en-IE', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+          </p>
+          <div className="nav-dropdown-wrap">
+            <button
+              type="button"
+              className="nav-link nav-dropdown-btn"
+              onClick={() => {
+                setProfileOpen((v) => !v)
+                setMoreOpen(false)
+              }}
+              aria-expanded={profileOpen}
+            >
+              Profile
+            </button>
+            <div className={`nav-dropdown-menu nav-dropdown-menu--profile ${profileOpen ? 'is-open' : ''}`} aria-hidden={!profileOpen}>
+              {user?.email && (
+                <span className="nav-user-email" title={user.email}>{user.email}</span>
+              )}
+              <div className="nav-theme-wrap">
+                <ThemeToggle />
+              </div>
+              <button type="button" className="nav-dropdown-link nav-dropdown-link-btn nav-logout" onClick={handleLogout}>Sign out</button>
+            </div>
           </div>
         </div>
 
