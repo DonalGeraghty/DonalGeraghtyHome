@@ -57,7 +57,7 @@ function Navbar() {
             Week
           </Link>
           <Link to="/month" className={`nav-link ${location.pathname === '/month' ? 'active' : ''}`} onClick={scrollToTop}>
-            Month
+            Activity
           </Link>
           <Link to="/todos" className={`nav-link ${location.pathname === '/todos' ? 'active' : ''}`} onClick={scrollToTop}>
             Todos
@@ -99,7 +99,7 @@ function Navbar() {
           Week
         </Link>
         <Link to="/month" className={`nav-drawer-link ${location.pathname === '/month' ? 'active' : ''}`} onClick={scrollToTop}>
-          Month
+          Activity
         </Link>
         <Link to="/todos" className={`nav-drawer-link ${location.pathname === '/todos' ? 'active' : ''}`} onClick={scrollToTop}>
           Todos

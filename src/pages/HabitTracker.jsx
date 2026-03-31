@@ -259,7 +259,7 @@ function HabitTracker() {
         <p className="habit-footnote">
           Stored under your user record in Firestore (field <code>habits_v1</code>). Signed in as {email}.{' '}
           <Link to="/month" className="habit-link">
-            Month summary
+            Activity graph
           </Link>
         </p>
       </div>

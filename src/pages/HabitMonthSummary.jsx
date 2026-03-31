@@ -1,40 +1,18 @@
-import React, { useMemo, useState } from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
+import HabitContributionChart from '../components/HabitContributionChart'
 import { useHabitData } from '../context/HabitDataContext'
-import { monthWeeks, weekScore } from '../habits/habitStats'
 import './HabitMonthSummary.css'
 
 function HabitMonthSummary() {
   const { cells, habits, loading } = useHabitData()
-  const now = new Date()
-  const [cursor, setCursor] = useState(() => new Date(now.getFullYear(), now.getMonth(), 1))
-
-  const year = cursor.getFullYear()
-  const monthIndex = cursor.getMonth()
-  const label = cursor.toLocaleDateString('en-IE', { month: 'long', year: 'numeric' })
-
-  const weeks = useMemo(() => monthWeeks(year, monthIndex), [year, monthIndex])
-
-  const rows = useMemo(() => {
-    return weeks.map((w, i) => {
-      const { pct, done, eligible } = weekScore(cells, w.ymds, habits, now)
-      const start = w.ymds[0]
-      const end = w.ymds[6]
-      return { key: `${start}_${i}`, start, end, pct, done, eligible }
-    })
-  }, [weeks, cells, habits, now])
-
-  const monthAvg = useMemo(() => {
-    if (!rows.length) return 0
-    const sum = rows.reduce((a, r) => a + r.pct, 0)
-    return Math.round(sum / rows.length)
-  }, [rows])
+  const [now] = useState(() => new Date())
 
   return (
     <main className="habit-month-page">
       <div className="habit-month-inner">
         <header className="habit-month-header">
-          <h1 className="habit-month-title">Month summary</h1>
+          <h1 className="habit-month-title">Activity</h1>
           <Link to="/" className="habit-month-back">
             ← Week view
           </Link>
@@ -46,53 +24,24 @@ function HabitMonthSummary() {
           </p>
         )}
 
-        <div className="habit-month-nav">
-          <button
-            type="button"
-            className="habit-month-nav-btn"
-            onClick={() => setCursor(new Date(year, monthIndex - 1, 1))}
-          >
-            ← Prev month
-          </button>
-          <span className="habit-month-label">{label}</span>
-          <button
-            type="button"
-            className="habit-month-nav-btn"
-            onClick={() => setCursor(new Date(year, monthIndex + 1, 1))}
-          >
-            Next month →
-          </button>
-        </div>
-
-        <p className="habit-month-avg">
-          Month average (by week): <strong>{monthAvg}%</strong>
+        <p className="habit-month-lead">
+          Last <strong>365 days</strong> per habit — same layout as a contribution graph (darker squares are fewer
+          completions; greens scale with streak length). Orange is a logged miss.
         </p>
 
-        <table className="habit-month-table">
-          <thead>
-            <tr>
-              <th scope="col">Week (Mon–Sun)</th>
-              <th scope="col">Score</th>
-              <th scope="col">Done</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((r) => (
-              <tr key={r.key}>
-                <td>
-                  {r.start} → {r.end}
-                </td>
-                <td>{r.pct}%</td>
-                <td>
-                  {r.done}/{r.eligible}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        {!loading && habits.length === 0 && (
+          <p className="habit-month-empty">
+            No habits yet. Add some from the week view, then your graphs will show up here.
+          </p>
+        )}
+
+        {!loading &&
+          habits.map((h) => (
+            <HabitContributionChart key={h.id} habit={h} cells={cells} now={now} />
+          ))}
 
         <p className="habit-month-note">
-          Scores only count days on or before today in each week. Data is synced to your account on the Janus API.
+          Synced to your account via the Janus API. Past days with no cell are shown as empty (not the same as a miss).
         </p>
       </div>
     </main>
