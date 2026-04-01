@@ -15,6 +15,8 @@ export const API_ENDPOINTS = {
   USER_FLASHCARD_GROUPS: '/api/user/flashcards/groups',
   USER_FLASHCARD_CARDS: '/api/user/flashcards/cards',
   USER_FLASHCARD_STUDY: '/api/user/flashcards/study',
+  USER_NUTRITION: '/api/user/nutrition',
+  USER_STOIC: '/api/user/stoic',
 }
 
 const TOKEN_KEY = 'dg_auth_token'

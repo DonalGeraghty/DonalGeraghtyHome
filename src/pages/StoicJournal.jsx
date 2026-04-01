@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { API_ENDPOINTS, authFetch } from '../config/api'
 import './HubPage.css'
 
 const STOIC_FIELDS = {
@@ -19,24 +20,11 @@ function ymd(date = new Date()) {
   return `${y}-${m}-${d}`
 }
 
-function dailyStorageKey(email, dateKey) {
-  const norm = encodeURIComponent((email || '').trim().toLowerCase())
-  return `stoic_v1_${norm}_${dateKey}`
-}
-
-function clearOldStoicEntries(email, keepDateKey) {
-  const norm = encodeURIComponent((email || '').trim().toLowerCase())
-  const prefix = `stoic_v1_${norm}_`
+async function parseJsonSafe(res) {
   try {
-    const toRemove = []
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i)
-      if (!key || !key.startsWith(prefix)) continue
-      if (key !== `${prefix}${keepDateKey}`) toRemove.push(key)
-    }
-    toRemove.forEach((k) => localStorage.removeItem(k))
+    return await res.json()
   } catch {
-    /* ignore */
+    return {}
   }
 }
 
@@ -45,46 +33,58 @@ function StoicJournal() {
   const email = user?.email || ''
   const [dateKey, setDateKey] = useState(() => ymd())
   const [form, setForm] = useState(STOIC_FIELDS)
-
-  const storageKey = useMemo(
-    () => dailyStorageKey(email, dateKey),
-    [email, dateKey]
-  )
+  const [error, setError] = useState('')
 
   useEffect(() => {
     if (!email) {
       setForm(STOIC_FIELDS)
+      setError('')
       return
     }
-    clearOldStoicEntries(email, dateKey)
-    try {
-      const raw = localStorage.getItem(storageKey)
-      if (!raw) {
+    const load = async () => {
+      try {
+        const res = await authFetch(API_ENDPOINTS.USER_STOIC, { method: 'GET' })
+        const data = await parseJsonSafe(res)
+        if (!res.ok) throw new Error(data.error || `Could not load stoic journal (${res.status})`)
+        const entry = data.entry && typeof data.entry === 'object' ? data.entry : {}
+        if (entry.date === dateKey && entry.form && typeof entry.form === 'object') {
+          setForm({
+            morningFocus: typeof entry.form.morningFocus === 'string' ? entry.form.morningFocus : '',
+            likelyChallenge: typeof entry.form.likelyChallenge === 'string' ? entry.form.likelyChallenge : '',
+            virtueToPractice: typeof entry.form.virtueToPractice === 'string' ? entry.form.virtueToPractice : '',
+            eveningWin: typeof entry.form.eveningWin === 'string' ? entry.form.eveningWin : '',
+            eveningImprove: typeof entry.form.eveningImprove === 'string' ? entry.form.eveningImprove : '',
+            nextAction: typeof entry.form.nextAction === 'string' ? entry.form.nextAction : '',
+          })
+        } else {
+          setForm(STOIC_FIELDS)
+        }
+        setError('')
+      } catch (e) {
+        setError(e.message || 'Failed to load stoic journal')
         setForm(STOIC_FIELDS)
-        return
       }
-      const parsed = JSON.parse(raw)
-      setForm({
-        morningFocus: typeof parsed?.morningFocus === 'string' ? parsed.morningFocus : '',
-        likelyChallenge: typeof parsed?.likelyChallenge === 'string' ? parsed.likelyChallenge : '',
-        virtueToPractice: typeof parsed?.virtueToPractice === 'string' ? parsed.virtueToPractice : '',
-        eveningWin: typeof parsed?.eveningWin === 'string' ? parsed.eveningWin : '',
-        eveningImprove: typeof parsed?.eveningImprove === 'string' ? parsed.eveningImprove : '',
-        nextAction: typeof parsed?.nextAction === 'string' ? parsed.nextAction : '',
-      })
-    } catch {
-      setForm(STOIC_FIELDS)
     }
-  }, [email, dateKey, storageKey])
+    void load()
+  }, [email, dateKey])
 
   useEffect(() => {
     if (!email) return
-    try {
-      localStorage.setItem(storageKey, JSON.stringify(form))
-    } catch {
-      /* ignore */
-    }
-  }, [email, form, storageKey])
+    void (async () => {
+      try {
+        const res = await authFetch(API_ENDPOINTS.USER_STOIC, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ date: dateKey, form }),
+        })
+        const data = await parseJsonSafe(res)
+        if (!res.ok) throw new Error(data.error || `Could not save stoic journal (${res.status})`)
+        setError('')
+      } catch (e) {
+        setError(e.message || 'Failed to save stoic journal')
+      }
+    })()
+  }, [email, form, dateKey])
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -124,6 +124,7 @@ function StoicJournal() {
           and the previous day entry is deleted. You can pair this with your <Link to="/month">activity</Link> page to
           spot consistency trends.
         </p>
+        {error ? <p className="hub-body">{error}</p> : null}
 
         <section className="hub-card" aria-label="Morning plan">
           <h2>Morning plan</h2>

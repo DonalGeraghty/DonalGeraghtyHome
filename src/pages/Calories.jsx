@@ -1,8 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useAuth } from '../context/AuthContext'
+import { API_ENDPOINTS, authFetch } from '../config/api'
 import './HubPage.css'
 
 const DAY_MS = 86400000
+const GLASS_ML = 250
+const PINT_ML = 568
 
 function formatYmd(date) {
   const y = date.getFullYear()
@@ -11,9 +14,12 @@ function formatYmd(date) {
   return `${y}-${m}-${d}`
 }
 
-function storageKey(email) {
-  const normalized = encodeURIComponent((email || '').trim().toLowerCase())
-  return `calorie_v1_${normalized}`
+async function parseJsonSafe(res) {
+  try {
+    return await res.json()
+  } catch {
+    return {}
+  }
 }
 
 function trailingDays(count, now = new Date()) {
@@ -98,45 +104,59 @@ function Calories() {
   const [history, setHistory] = useState({})
   const [caloriesInput, setCaloriesInput] = useState('')
   const [weightInput, setWeightInput] = useState('')
+  const [waterCustomInput, setWaterCustomInput] = useState('')
+  const [error, setError] = useState('')
 
   useEffect(() => {
     if (!email) {
       setHistory({})
       setCaloriesInput('')
       setWeightInput('')
+      setWaterCustomInput('')
       return
     }
-    try {
-      const raw = localStorage.getItem(storageKey(email))
-      const parsed = raw ? JSON.parse(raw) : {}
-      const next = parsed && typeof parsed === 'object' ? parsed : {}
-      setHistory(next)
-      const todayRow = next[today] || {}
-      setCaloriesInput(
-        typeof todayRow.calories === 'number' && Number.isFinite(todayRow.calories)
-          ? String(Math.round(todayRow.calories))
-          : ''
-      )
-      setWeightInput(
-        typeof todayRow.weight === 'number' && Number.isFinite(todayRow.weight)
-          ? String(todayRow.weight)
-          : ''
-      )
-    } catch {
-      setHistory({})
-      setCaloriesInput('')
-      setWeightInput('')
+    const load = async () => {
+      try {
+        const res = await authFetch(API_ENDPOINTS.USER_NUTRITION, { method: 'GET' })
+        const data = await parseJsonSafe(res)
+        if (!res.ok) throw new Error(data.error || `Could not load nutrition (${res.status})`)
+        const next = data.history && typeof data.history === 'object' ? data.history : {}
+        setError('')
+        setHistory(next)
+        const todayRow = next[today] || {}
+        setCaloriesInput(
+          typeof todayRow.calories === 'number' && Number.isFinite(todayRow.calories)
+            ? String(Math.round(todayRow.calories))
+            : ''
+        )
+        setWeightInput(
+          typeof todayRow.weight === 'number' && Number.isFinite(todayRow.weight)
+            ? String(todayRow.weight)
+            : ''
+        )
+        setWaterCustomInput('')
+      } catch (e) {
+        setError(e.message || 'Failed to load nutrition data')
+        setHistory({})
+        setCaloriesInput('')
+        setWeightInput('')
+        setWaterCustomInput('')
+      }
     }
+    void load()
   }, [email, today])
 
-  const persistHistory = (next) => {
+  const persistHistory = async (next) => {
     setHistory(next)
     if (!email) return
-    try {
-      localStorage.setItem(storageKey(email), JSON.stringify(next))
-    } catch {
-      /* ignore */
-    }
+    const res = await authFetch(API_ENDPOINTS.USER_NUTRITION, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ history: next }),
+    })
+    const data = await parseJsonSafe(res)
+    if (!res.ok) throw new Error(data.error || `Could not save nutrition (${res.status})`)
+    return data.history && typeof data.history === 'object' ? data.history : next
   }
 
   const updateToday = (patch) => {
@@ -144,10 +164,19 @@ function Calories() {
     const row = { ...current, ...patch }
     if (row.calories == null) delete row.calories
     if (row.weight == null) delete row.weight
+    if (row.waterMl == null) delete row.waterMl
     const next = { ...history }
     if (Object.keys(row).length === 0) delete next[today]
     else next[today] = row
-    persistHistory(next)
+    void (async () => {
+      try {
+        setError('')
+        const persisted = await persistHistory(next)
+        setHistory(persisted)
+      } catch (e) {
+        setError(e.message || 'Failed to save nutrition data')
+      }
+    })()
   }
 
   const dayKeys = useMemo(() => trailingDays(30), [])
@@ -159,6 +188,16 @@ function Calories() {
     () => dayKeys.map((k) => (typeof history[k]?.weight === 'number' ? history[k].weight : null)),
     [dayKeys, history]
   )
+  const waterSeries = useMemo(
+    () => dayKeys.map((k) => (typeof history[k]?.waterMl === 'number' ? history[k].waterMl : null)),
+    [dayKeys, history]
+  )
+  const todayWaterMl = typeof history[today]?.waterMl === 'number' ? history[today].waterMl : 0
+
+  const addWater = (mlToAdd) => {
+    if (!Number.isFinite(mlToAdd) || mlToAdd <= 0) return
+    updateToday({ waterMl: todayWaterMl + Math.round(mlToAdd) })
+  }
 
   return (
     <main className="hub-page">
@@ -172,8 +211,9 @@ function Calories() {
 
         <p className="hub-body">
           Enter today's totals only for now: calories eaten and body weight. Meal and nutrient breakdown can be added
-          later.
+          later. You can also track water intake in ml.
         </p>
+        {error ? <p className="hub-body">{error}</p> : null}
 
         <section className="hub-card" aria-label="Today inputs">
           <h2>Today ({today})</h2>
@@ -221,8 +261,50 @@ function Calories() {
           </div>
         </section>
 
+        <section className="hub-card" aria-label="Water tracking">
+          <h2>Water ({today})</h2>
+          <div className="hub-form-grid">
+            <p className="hub-water-total">
+              Today: <strong>{todayWaterMl} ml</strong>
+            </p>
+            <div className="hub-water-actions">
+              <button type="button" className="hub-btn" onClick={() => addWater(GLASS_ML)}>
+                +1 glass ({GLASS_ML} ml)
+              </button>
+              <button type="button" className="hub-btn" onClick={() => addWater(PINT_ML)}>
+                +1 pint ({PINT_ML} ml)
+              </button>
+            </div>
+            <div className="hub-water-custom">
+              <input
+                className="hub-input"
+                type="number"
+                min="1"
+                step="1"
+                placeholder="Custom ml amount"
+                value={waterCustomInput}
+                onChange={(e) => setWaterCustomInput(e.target.value)}
+              />
+              <button
+                type="button"
+                className="hub-btn"
+                onClick={() => {
+                  const n = Number.parseInt(waterCustomInput, 10)
+                  if (Number.isFinite(n) && n > 0) {
+                    addWater(n)
+                    setWaterCustomInput('')
+                  }
+                }}
+              >
+                Add custom ml
+              </button>
+            </div>
+          </div>
+        </section>
+
         <MetricChart title="Calories trend (last 30 days)" values={calorieSeries} unit=" kcal" />
         <MetricChart title="Weight trend (last 30 days)" values={weightSeries} unit=" kg" />
+        <MetricChart title="Water trend (last 30 days)" values={waterSeries} unit=" ml" />
       </div>
     </main>
   )
