@@ -12,7 +12,6 @@ function HabitManagerModal({ onClose }) {
     id: '',
     label: '',
     category: 'finance',
-    description: ''
   })
   const [error, setError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -20,7 +19,11 @@ function HabitManagerModal({ onClose }) {
   const isNew = editingId === 'NEW'
 
   const handleEdit = (habit) => {
-    setFormData({ ...habit })
+    setFormData({
+      id: habit.id,
+      label: habit.label,
+      category: habit.category || 'finance',
+    })
     setEditingId(habit.id)
     setError('')
   }
@@ -30,7 +33,6 @@ function HabitManagerModal({ onClose }) {
       id: '',
       label: '',
       category: 'finance',
-      description: ''
     })
     setEditingId('NEW')
     setError('')
@@ -46,7 +48,7 @@ function HabitManagerModal({ onClose }) {
     e.preventDefault()
     setError('')
 
-    const { id, label, category, description } = formData
+    const { id, label, category } = formData
     if (!id || !label || !category) {
       setError('ID, Label, and Category are required.')
       return
@@ -65,9 +67,9 @@ function HabitManagerModal({ onClose }) {
     setIsSubmitting(true)
     let ok = false
     if (isNew) {
-      ok = await addHabit({ id, label, category, description })
+      ok = await addHabit({ id, label, category })
     } else {
-      ok = await editHabit({ id, label, category, description })
+      ok = await editHabit({ id, label, category })
     }
     setIsSubmitting(false)
 
@@ -130,17 +132,6 @@ function HabitManagerModal({ onClose }) {
                 </select>
               </label>
 
-              <label className="hm-label">
-                <span>Description (Optional)</span>
-                <textarea
-                  className="hm-input"
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  rows={2}
-                  placeholder="Brief instructions..."
-                />
-              </label>
-
               <div className="hm-form-actions">
                 <button type="button" className="hm-btn hm-btn-secondary" onClick={() => setEditingId(null)}>Cancel</button>
                 <button type="submit" className="hm-btn hm-btn-primary" disabled={isSubmitting}>
@@ -158,7 +149,6 @@ function HabitManagerModal({ onClose }) {
                     <div className="hm-list-item" key={h.id}>
                       <div className="hm-item-info">
                         <strong>{h.label}</strong> <span className={`habit-cat habit-cat--${h.category}`}>{CATEGORY_LABELS[h.category] || h.category}</span>
-                        <div className="hm-item-desc">{h.description}</div>
                       </div>
                       <div className="hm-item-actions">
                         <button className="hm-btn hm-btn-secondary hm-btn-sm" onClick={() => handleEdit(h)}>Edit</button>

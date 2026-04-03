@@ -204,7 +204,6 @@ function HabitTracker() {
                     <span className={`habit-cat habit-cat--${h.category}`}>
                       {CATEGORY_LABELS[h.category]}
                     </span>
-                    <span className="habit-desc">{h.description}</span>
                   </th>
                   {weekYmds.map((ymd) => {
                     const future = isFutureYmd(ymd)
