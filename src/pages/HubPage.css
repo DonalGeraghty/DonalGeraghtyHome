@@ -170,3 +170,75 @@
 .hub-btn:hover {
   border-color: var(--accent-color);
 }
+
+.hub-day-planner-options {
+  margin-bottom: 1rem;
+}
+
+.hub-day-planner-options-heading {
+  margin-bottom: 0.35rem;
+}
+
+.hub-day-planner-add {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.65rem;
+}
+
+.hub-day-planner-add .hub-input {
+  flex: 1 1 12rem;
+  min-width: 0;
+}
+
+.hub-day-planner-option-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.hub-day-planner-option-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  align-items: center;
+}
+
+.hub-day-planner-option-row .hub-input {
+  flex: 1 1 10rem;
+  min-width: 0;
+}
+
+.hub-day-planner-option-label {
+  flex: 1 1 8rem;
+  font-size: 0.88rem;
+  color: var(--text-primary);
+}
+
+.hub-day-planner-hours {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.hub-day-planner-hour-row {
+  display: grid;
+  grid-template-columns: minmax(6.5rem, 7.5rem) 1fr;
+  gap: 0.5rem;
+  align-items: center;
+  margin: 0;
+}
+
+.hub-day-planner-hour-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.hub-day-planner-select {
+  margin: 0;
+}

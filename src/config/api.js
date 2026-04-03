@@ -17,6 +17,8 @@ export const API_ENDPOINTS = {
   USER_FLASHCARD_STUDY: '/api/user/flashcards/study',
   USER_NUTRITION: '/api/user/nutrition',
   USER_STOIC: '/api/user/stoic',
+  DAY_PLANNER_OPTIONS: '/api/user/day-planner/options',
+  DAY_PLANNER_DAILY: '/api/user/day-planner/daily',
 }
 
 const TOKEN_KEY = 'dg_auth_token'

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { API_ENDPOINTS, authFetch } from '../config/api'
@@ -11,6 +11,19 @@ const STOIC_FIELDS = {
   eveningWin: '',
   eveningImprove: '',
   nextAction: '',
+}
+
+function emptyDayPlannerSlots() {
+  const o = {}
+  for (let h = 0; h < 24; h += 1) o[String(h)] = ''
+  return o
+}
+
+function hourRangeLabel(h) {
+  const a = String(h).padStart(2, '0')
+  const next = h === 23 ? 0 : h + 1
+  const b = String(next).padStart(2, '0')
+  return `${a}:00–${b}:00`
 }
 
 function ymd(date = new Date()) {
@@ -34,6 +47,14 @@ function StoicJournal() {
   const [dateKey, setDateKey] = useState(() => ymd())
   const [form, setForm] = useState(STOIC_FIELDS)
   const [error, setError] = useState('')
+  const [plannerOptions, setPlannerOptions] = useState([])
+  const [plannerSlots, setPlannerSlots] = useState(emptyDayPlannerSlots)
+  const [plannerError, setPlannerError] = useState('')
+  const [dailyPlannerReady, setDailyPlannerReady] = useState(false)
+  const [newPlannerLabel, setNewPlannerLabel] = useState('')
+  const [editingPlannerId, setEditingPlannerId] = useState(null)
+  const [editingPlannerLabel, setEditingPlannerLabel] = useState('')
+  const skipNextPlannerSave = useRef(false)
 
   useEffect(() => {
     if (!email) {
@@ -94,6 +115,90 @@ function StoicJournal() {
     return () => clearInterval(timer)
   }, [])
 
+  useEffect(() => {
+    if (!email) {
+      setPlannerOptions([])
+      setPlannerError('')
+      return
+    }
+    const load = async () => {
+      try {
+        const res = await authFetch(API_ENDPOINTS.DAY_PLANNER_OPTIONS, { method: 'GET' })
+        const data = await parseJsonSafe(res)
+        if (!res.ok) throw new Error(data.error || `Could not load planner options (${res.status})`)
+        const raw = data.options
+        const list = Array.isArray(raw)
+          ? raw
+              .filter((o) => o && typeof o.id === 'string' && typeof o.label === 'string')
+              .map((o) => ({ id: o.id, label: o.label }))
+          : []
+        setPlannerOptions(list)
+        setPlannerError('')
+      } catch (e) {
+        setPlannerError(e.message || 'Failed to load planner options')
+        setPlannerOptions([])
+      }
+    }
+    void load()
+  }, [email])
+
+  useEffect(() => {
+    if (!email) {
+      setPlannerSlots(emptyDayPlannerSlots())
+      setDailyPlannerReady(false)
+      return
+    }
+    setDailyPlannerReady(false)
+    const load = async () => {
+      try {
+        const res = await authFetch(API_ENDPOINTS.DAY_PLANNER_DAILY, { method: 'GET' })
+        const data = await parseJsonSafe(res)
+        if (!res.ok) throw new Error(data.error || `Could not load day planner (${res.status})`)
+        const entry = data.entry && typeof data.entry === 'object' ? data.entry : {}
+        const next = emptyDayPlannerSlots()
+        if (entry.date === dateKey && entry.slots && typeof entry.slots === 'object') {
+          for (let h = 0; h < 24; h += 1) {
+            const k = String(h)
+            const v = entry.slots[k]
+            next[k] = typeof v === 'string' ? v : ''
+          }
+        }
+        skipNextPlannerSave.current = true
+        setPlannerSlots(next)
+        setPlannerError('')
+      } catch (e) {
+        setPlannerError(e.message || 'Failed to load day planner')
+        skipNextPlannerSave.current = true
+        setPlannerSlots(emptyDayPlannerSlots())
+      } finally {
+        setDailyPlannerReady(true)
+      }
+    }
+    void load()
+  }, [email, dateKey])
+
+  useEffect(() => {
+    if (!email || !dailyPlannerReady) return
+    if (skipNextPlannerSave.current) {
+      skipNextPlannerSave.current = false
+      return
+    }
+    void (async () => {
+      try {
+        const res = await authFetch(API_ENDPOINTS.DAY_PLANNER_DAILY, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ date: dateKey, slots: plannerSlots }),
+        })
+        const data = await parseJsonSafe(res)
+        if (!res.ok) throw new Error(data.error || `Could not save day planner (${res.status})`)
+        setPlannerError('')
+      } catch (e) {
+        setPlannerError(e.message || 'Failed to save day planner')
+      }
+    })()
+  }, [email, dateKey, plannerSlots, dailyPlannerReady])
+
   const prettyDate = useMemo(() => {
     const [y, m, d] = dateKey.split('-').map(Number)
     return new Date(y, m - 1, d).toLocaleDateString('en-IE', {
@@ -107,6 +212,100 @@ function StoicJournal() {
   const onChange = (field) => (e) => {
     const value = e.target.value
     setForm((f) => ({ ...f, [field]: value }))
+  }
+
+  const onPlannerSlotChange = (hourKey) => (e) => {
+    const value = e.target.value
+    setPlannerSlots((s) => ({ ...s, [hourKey]: value }))
+  }
+
+  const addPlannerOption = async () => {
+    const label = newPlannerLabel.trim()
+    if (!email || !label) return
+    try {
+      const res = await authFetch(API_ENDPOINTS.DAY_PLANNER_OPTIONS, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ label }),
+      })
+      const data = await parseJsonSafe(res)
+      if (!res.ok) throw new Error(data.error || `Could not add option (${res.status})`)
+      const raw = data.options
+      if (Array.isArray(raw)) {
+        setPlannerOptions(
+          raw
+            .filter((o) => o && typeof o.id === 'string' && typeof o.label === 'string')
+            .map((o) => ({ id: o.id, label: o.label })),
+        )
+      }
+      setNewPlannerLabel('')
+      setPlannerError('')
+    } catch (e) {
+      setPlannerError(e.message || 'Failed to add planner option')
+    }
+  }
+
+  const savePlannerOptionEdit = async (id) => {
+    const label = editingPlannerLabel.trim()
+    if (!email || !id || !label) return
+    try {
+      const res = await authFetch(API_ENDPOINTS.DAY_PLANNER_OPTIONS, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, label }),
+      })
+      const data = await parseJsonSafe(res)
+      if (!res.ok) throw new Error(data.error || `Could not update option (${res.status})`)
+      const raw = data.options
+      if (Array.isArray(raw)) {
+        setPlannerOptions(
+          raw
+            .filter((o) => o && typeof o.id === 'string' && typeof o.label === 'string')
+            .map((o) => ({ id: o.id, label: o.label })),
+        )
+      }
+      setEditingPlannerId(null)
+      setEditingPlannerLabel('')
+      setPlannerError('')
+    } catch (e) {
+      setPlannerError(e.message || 'Failed to update planner option')
+    }
+  }
+
+  const deletePlannerOption = async (id) => {
+    if (!email || !id) return
+    try {
+      const res = await authFetch(API_ENDPOINTS.DAY_PLANNER_OPTIONS, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id }),
+      })
+      const data = await parseJsonSafe(res)
+      if (!res.ok) throw new Error(data.error || `Could not delete option (${res.status})`)
+      const raw = data.options
+      if (Array.isArray(raw)) {
+        setPlannerOptions(
+          raw
+            .filter((o) => o && typeof o.id === 'string' && typeof o.label === 'string')
+            .map((o) => ({ id: o.id, label: o.label })),
+        )
+      }
+      setPlannerSlots((s) => {
+        const next = { ...s }
+        for (let h = 0; h < 24; h += 1) {
+          const k = String(h)
+          if (next[k] === id) next[k] = ''
+        }
+        return next
+      })
+      if (editingPlannerId === id) {
+        setEditingPlannerId(null)
+        setEditingPlannerLabel('')
+      }
+      setPlannerError('')
+    } catch (e) {
+      setPlannerError(e.message || 'Failed to delete planner option')
+    }
   }
 
   return (
@@ -125,6 +324,118 @@ function StoicJournal() {
           spot consistency trends.
         </p>
         {error ? <p className="hub-body">{error}</p> : null}
+        {plannerError ? <p className="hub-body">{plannerError}</p> : null}
+
+        <section className="hub-card" aria-label="Day planner">
+          <h2>Day planner</h2>
+          <p className="hub-body" style={{ marginBottom: '0.75rem' }}>
+            Assign an activity to each hour of the day. Like the journal above, choices are kept for{' '}
+            <strong>today only</strong> and reset when the date changes. The list of activities is saved for your
+            account.
+          </p>
+          <div className="hub-day-planner-options" aria-label="Activity types">
+            <div className="hub-field hub-day-planner-options-heading">
+              <span>Activity types</span>
+            </div>
+            <div className="hub-day-planner-add">
+              <input
+                className="hub-input"
+                type="text"
+                value={newPlannerLabel}
+                onChange={(e) => setNewPlannerLabel(e.target.value)}
+                placeholder="New activity name"
+                maxLength={120}
+                aria-label="New activity name"
+              />
+              <button type="button" className="hub-btn" onClick={() => void addPlannerOption()} disabled={!email}>
+                Add
+              </button>
+            </div>
+            <ul className="hub-day-planner-option-list">
+              {plannerOptions.map((o) => (
+                <li key={o.id} className="hub-day-planner-option-row">
+                  {editingPlannerId === o.id ? (
+                    <>
+                      <input
+                        className="hub-input"
+                        type="text"
+                        value={editingPlannerLabel}
+                        onChange={(e) => setEditingPlannerLabel(e.target.value)}
+                        maxLength={120}
+                        aria-label={`Edit ${o.label}`}
+                      />
+                      <button
+                        type="button"
+                        className="hub-btn"
+                        onClick={() => void savePlannerOptionEdit(o.id)}
+                        disabled={!email}
+                      >
+                        Save
+                      </button>
+                      <button
+                        type="button"
+                        className="hub-btn"
+                        onClick={() => {
+                          setEditingPlannerId(null)
+                          setEditingPlannerLabel('')
+                        }}
+                      >
+                        Cancel
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <span className="hub-day-planner-option-label">{o.label}</span>
+                      <button
+                        type="button"
+                        className="hub-btn"
+                        onClick={() => {
+                          setEditingPlannerId(o.id)
+                          setEditingPlannerLabel(o.label)
+                        }}
+                        disabled={!email}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        type="button"
+                        className="hub-btn"
+                        onClick={() => void deletePlannerOption(o.id)}
+                        disabled={!email}
+                      >
+                        Delete
+                      </button>
+                    </>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="hub-day-planner-hours" aria-label="Hourly plan">
+            {Array.from({ length: 24 }, (_, h) => {
+              const key = String(h)
+              return (
+                <label key={key} className="hub-day-planner-hour-row">
+                  <span className="hub-day-planner-hour-label">{hourRangeLabel(h)}</span>
+                  <select
+                    className="hub-input hub-day-planner-select"
+                    value={plannerSlots[key] || ''}
+                    onChange={onPlannerSlotChange(key)}
+                    disabled={!email || !dailyPlannerReady}
+                    aria-label={`Activity for ${hourRangeLabel(h)}`}
+                  >
+                    <option value="">—</option>
+                    {plannerOptions.map((o) => (
+                      <option key={o.id} value={o.id}>
+                        {o.label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              )
+            })}
+          </div>
+        </section>
 
         <section className="hub-card" aria-label="Morning plan">
           <h2>Morning plan</h2>
