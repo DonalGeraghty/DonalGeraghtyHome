@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react'
-import { CATEGORY_LABELS } from '../habits/habitConfig'
+import { useHabitData } from '../context/HabitDataContext'
+import { habitCategoryLabel } from '../habits/habitConfig'
 import {
   buildContributionYearGrid,
   cellBucket,
@@ -22,6 +23,7 @@ function formatTipDate(ymd) {
 }
 
 function HabitContributionChart({ habit, cells, now = new Date() }) {
+  const { habitCategories } = useHabitData()
   const [tipLine, setTipLine] = useState(null)
 
   const grid = useMemo(() => buildContributionYearGrid(now, 365), [now])
@@ -54,8 +56,8 @@ function HabitContributionChart({ habit, cells, now = new Date() }) {
             Completions in the last year
           </p>
         </div>
-        <span className={`contrib-cat ch-cat--${habit.category || 'mindset'}`}>
-          {CATEGORY_LABELS[habit.category] || 'Habit'}
+        <span className="contrib-cat ch-cat--custom">
+          {habitCategoryLabel(habitCategories, habit.category)}
         </span>
       </header>
 

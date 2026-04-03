@@ -30,6 +30,7 @@ export function HabitDataProvider({ children }) {
   const email = user?.email || ''
   const [cells, setCells] = useState({})
   const [habits, setHabits] = useState([])
+  const [habitCategories, setHabitCategories] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [saving, setSaving] = useState(false)
@@ -44,6 +45,7 @@ export function HabitDataProvider({ children }) {
       if (!email) {
         setCells({})
         setHabits([])
+        setHabitCategories([])
         if (!silent) setLoading(false)
         setError(null)
         return
@@ -53,13 +55,15 @@ export function HabitDataProvider({ children }) {
         setError(null)
       }
       try {
-        const [resCells, resHabits] = await Promise.all([
+        const [resCells, resHabits, resCats] = await Promise.all([
           authFetch(API_ENDPOINTS.HABITS_GET, { method: 'GET' }),
-          authFetch(API_ENDPOINTS.USER_HABITS_GET, { method: 'GET' })
+          authFetch(API_ENDPOINTS.USER_HABITS_GET, { method: 'GET' }),
+          authFetch(API_ENDPOINTS.USER_HABIT_CATEGORIES, { method: 'GET' }),
         ])
-        
+
         const data = await parseJsonSafe(resCells)
         const habitsData = await parseJsonSafe(resHabits)
+        const catsData = await parseJsonSafe(resCats)
         
         if (!resCells.ok) {
           throw new Error(data.error || `Could not load habits (${resCells.status})`)
@@ -70,6 +74,14 @@ export function HabitDataProvider({ children }) {
           setHabits(habitsData.habits)
         } else {
           setHabits([])
+        }
+
+        if (resCats.ok && catsData.categories && Array.isArray(catsData.categories)) {
+          setHabitCategories(
+            catsData.categories.filter((c) => c && typeof c.id === 'string' && typeof c.label === 'string'),
+          )
+        } else {
+          setHabitCategories([])
         }
 
         if (Object.keys(next).length === 0) {
@@ -95,6 +107,7 @@ export function HabitDataProvider({ children }) {
           setError(e.message || 'Failed to load habits')
           setCells({})
           setHabits([])
+          setHabitCategories([])
         }
       } finally {
         if (!silent) setLoading(false)
@@ -186,8 +199,10 @@ export function HabitDataProvider({ children }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ habits: newList }),
       })
-      if (res.ok) {
-        setHabits(newList)
+      const data = await parseJsonSafe(res)
+      if (res.ok && data.habits && Array.isArray(data.habits)) {
+        setHabits(data.habits)
+        await load({ silent: true })
         return true
       }
       return false
@@ -196,7 +211,66 @@ export function HabitDataProvider({ children }) {
     } finally {
       setSaving(false)
     }
+  }, [email, load])
+
+  const addHabitCategory = useCallback(async (label) => {
+    if (!email) return false
+    try {
+      const res = await authFetch(API_ENDPOINTS.USER_HABIT_CATEGORIES, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ label }),
+      })
+      const data = await parseJsonSafe(res)
+      if (res.ok && data.categories && Array.isArray(data.categories)) {
+        setHabitCategories(data.categories.filter((c) => c && typeof c.id === 'string' && typeof c.label === 'string'))
+        return true
+      }
+      return false
+    } catch {
+      return false
+    }
   }, [email])
+
+  const updateHabitCategory = useCallback(async (id, label) => {
+    if (!email) return false
+    try {
+      const res = await authFetch(API_ENDPOINTS.USER_HABIT_CATEGORIES, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, label }),
+      })
+      const data = await parseJsonSafe(res)
+      if (res.ok && data.categories && Array.isArray(data.categories)) {
+        setHabitCategories(data.categories.filter((c) => c && typeof c.id === 'string' && typeof c.label === 'string'))
+        return true
+      }
+      return false
+    } catch {
+      return false
+    }
+  }, [email])
+
+  const deleteHabitCategory = useCallback(async (id, reassignTo) => {
+    if (!email) return false
+    try {
+      const body = reassignTo ? { id, reassignTo } : { id }
+      const res = await authFetch(API_ENDPOINTS.USER_HABIT_CATEGORIES, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      })
+      const data = await parseJsonSafe(res)
+      if (res.ok && data.categories && Array.isArray(data.categories)) {
+        setHabitCategories(data.categories.filter((c) => c && typeof c.id === 'string' && typeof c.label === 'string'))
+        await load({ silent: true })
+        return true
+      }
+      return false
+    } catch {
+      return false
+    }
+  }, [email, load])
 
   const addHabit = useCallback(async (habit) => {
     const list = [...habits, habit]
@@ -217,6 +291,7 @@ export function HabitDataProvider({ children }) {
     () => ({
       cells,
       habits,
+      habitCategories,
       loading,
       error,
       saving,
@@ -227,8 +302,28 @@ export function HabitDataProvider({ children }) {
       addHabit,
       editHabit,
       deleteHabit,
+      addHabitCategory,
+      updateHabitCategory,
+      deleteHabitCategory,
     }),
-    [cells, habits, loading, error, saving, load, patchCell, cycleCell, getCell, addHabit, editHabit, deleteHabit]
+    [
+      cells,
+      habits,
+      habitCategories,
+      loading,
+      error,
+      saving,
+      load,
+      patchCell,
+      cycleCell,
+      getCell,
+      addHabit,
+      editHabit,
+      deleteHabit,
+      addHabitCategory,
+      updateHabitCategory,
+      deleteHabitCategory,
+    ]
   )
 
   return <HabitDataContext.Provider value={value}>{children}</HabitDataContext.Provider>

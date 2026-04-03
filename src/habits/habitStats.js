@@ -86,22 +86,6 @@ export function computeCurrentStreakDays(cells, habits, now = new Date()) {
   return run
 }
 
-/** Finance habits weekly done ratio (0–1) for motivation copy. */
-export function financeHabitWeekRatio(cells, weekYmds, habits, now = new Date()) {
-  const financeIds = habits.filter((h) => h.category === 'finance').map((h) => h.id)
-  if (financeIds.length === 0) return 1
-  let eligible = 0
-  let done = 0
-  for (const ymd of weekYmds) {
-    if (isFutureYmd(ymd, now)) continue
-    for (const id of financeIds) {
-      eligible++
-      if (getCellFromCells(cells, ymd, id) === 'done') done++
-    }
-  }
-  return eligible === 0 ? 1 : done / eligible
-}
-
 /** Weeks (Monday start) that overlap the given calendar month. */
 export function monthWeeks(year, monthIndex) {
   const first = new Date(year, monthIndex, 1)

@@ -10,6 +10,7 @@ export const API_ENDPOINTS = {
   HABITS_PATCH_CELL: '/api/habits/cell',
   USER_HABITS_GET: '/api/user/habits',
   USER_HABITS_PUT: '/api/user/habits',
+  USER_HABIT_CATEGORIES: '/api/user/habit-categories',
   USER_TODOS: '/api/user/todos',
   USER_FLASHCARDS: '/api/user/flashcards',
   USER_FLASHCARD_GROUPS: '/api/user/flashcards/groups',

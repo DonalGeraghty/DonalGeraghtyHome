@@ -57,19 +57,9 @@
   align-self: flex-start;
 }
 
-.ch-cat--finance {
+.ch-cat--custom {
   color: #79c0ff;
   border-color: rgba(121, 192, 255, 0.35);
-}
-
-.ch-cat--health {
-  color: #7ee787;
-  border-color: rgba(126, 231, 135, 0.3);
-}
-
-.ch-cat--mindset {
-  color: #d2a8ff;
-  border-color: rgba(210, 168, 255, 0.35);
 }
 
 .contrib-scroll {

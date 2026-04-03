@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { useHabitData } from '../context/HabitDataContext'
-import { CATEGORY_LABELS } from '../habits/habitConfig'
+import { habitCategoryLabel } from '../habits/habitConfig'
 import HabitContributionChart from '../components/HabitContributionChart'
 import HabitManagerModal from '../components/HabitManagerModal'
 import {
@@ -34,7 +34,7 @@ function shortDate(ymd) {
 function HabitTracker() {
   const { user } = useAuth()
   const email = user?.email || ''
-  const { cells, habits, loading, error, saving, reload, cycleCell, getCell } = useHabitData()
+  const { cells, habits, habitCategories, loading, error, saving, reload, cycleCell, getCell } = useHabitData()
   const [weekOffset, setWeekOffset] = useState(0)
   const [showManager, setShowManager] = useState(false)
   const [activityNow] = useState(() => new Date())
@@ -201,8 +201,8 @@ function HabitTracker() {
                 <tr key={h.id}>
                   <th scope="row" className="habit-row-label">
                     <span className="habit-name">{h.label}</span>
-                    <span className={`habit-cat habit-cat--${h.category}`}>
-                      {CATEGORY_LABELS[h.category]}
+                    <span className="habit-cat habit-cat--custom">
+                      {habitCategoryLabel(habitCategories, h.category)}
                     </span>
                   </th>
                   {weekYmds.map((ymd) => {
