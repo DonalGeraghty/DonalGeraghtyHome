@@ -35,17 +35,7 @@ function Navbar() {
               scrollToTop();
             }}
           >
-            Week
-          </button>
-          <button
-            type="button"
-            className={`nav-link ${location.pathname === '/month' ? 'active' : ''}`}
-            onClick={() => {
-              setLocation({ pathname: '/month' });
-              scrollToTop();
-            }}
-          >
-            Month
+            Habits
           </button>
         </div>
         <div className="nav-right">

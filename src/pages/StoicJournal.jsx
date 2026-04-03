@@ -209,6 +209,36 @@ function StoicJournal() {
     })
   }, [dateKey])
 
+  const plannerHoursByActivity = useMemo(() => {
+    const knownIds = new Set(plannerOptions.map((o) => o.id))
+    const counts = new Map()
+    let unassigned = 0
+    let other = 0
+    for (let h = 0; h < 24; h += 1) {
+      const id = plannerSlots[String(h)] || ''
+      if (!id) {
+        unassigned += 1
+        continue
+      }
+      if (!knownIds.has(id)) {
+        other += 1
+        continue
+      }
+      counts.set(id, (counts.get(id) || 0) + 1)
+    }
+    const rows = plannerOptions
+      .map((o) => ({ id: o.id, label: o.label, hours: counts.get(o.id) || 0, variant: 'activity' }))
+      .filter((r) => r.hours > 0)
+      .sort((a, b) => b.hours - a.hours)
+    if (other > 0) {
+      rows.push({ id: '__other', label: 'Other', hours: other, variant: 'muted' })
+    }
+    if (unassigned > 0) {
+      rows.push({ id: '__unassigned', label: 'Unassigned', hours: unassigned, variant: 'muted' })
+    }
+    return rows
+  }, [plannerSlots, plannerOptions])
+
   const onChange = (field) => (e) => {
     const value = e.target.value
     setForm((f) => ({ ...f, [field]: value }))
@@ -320,7 +350,7 @@ function StoicJournal() {
 
         <p className="hub-body">
           This journal is scoped to <strong>today only</strong> ({prettyDate}). At midnight it resets for the next day
-          and the previous day entry is deleted. You can pair this with your <Link to="/month">activity</Link> page to
+          and the previous day entry is deleted. You can pair this with your <Link to="/#activity">habits / activity</Link> page to
           spot consistency trends.
         </p>
         {error ? <p className="hub-body">{error}</p> : null}
@@ -328,7 +358,7 @@ function StoicJournal() {
 
         <section className="hub-card" aria-label="Day planner">
           <h2>Day planner</h2>
-          <p className="hub-body" style={{ marginBottom: '0.75rem' }}>
+          <p className="hub-body hub-day-planner-intro">
             Assign an activity to each hour of the day. Like the journal above, choices are kept for{' '}
             <strong>today only</strong> and reset when the date changes. The list of activities is saved for your
             account.
@@ -435,6 +465,42 @@ function StoicJournal() {
               )
             })}
           </div>
+          {email ? (
+            <div className="hub-day-planner-chart" aria-label="Hours by activity">
+              <h3 className="hub-day-planner-chart-title">Hours by activity</h3>
+              <p className="hub-body hub-day-planner-chart-caption">
+                Each assigned hour slot counts as one hour for that activity (24 hours total).
+              </p>
+              {!dailyPlannerReady ? (
+                <p className="hub-body">Loading planner…</p>
+              ) : plannerHoursByActivity.length === 0 ? (
+                <p className="hub-body">Assign activities in the grid above to see a breakdown.</p>
+              ) : (
+                <ul className="hub-day-planner-bar-list">
+                  {plannerHoursByActivity.map((row) => (
+                    <li key={row.id} className="hub-day-planner-bar-row">
+                      <span className="hub-day-planner-bar-label" title={row.label}>
+                        {row.label}
+                      </span>
+                      <div className="hub-day-planner-bar-track" role="presentation">
+                        <div
+                          className={
+                            row.variant === 'muted'
+                              ? 'hub-day-planner-bar-fill hub-day-planner-bar-fill--muted'
+                              : 'hub-day-planner-bar-fill'
+                          }
+                          style={{ width: `${(row.hours / 24) * 100}%` }}
+                        />
+                      </div>
+                      <span className="hub-day-planner-bar-value" aria-label={`${row.hours} hours`}>
+                        {row.hours}h
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ) : null}
         </section>
 
         <section className="hub-card" aria-label="Morning plan">

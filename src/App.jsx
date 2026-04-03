@@ -62,11 +62,12 @@ function Navbar() {
 
         {/* Desktop nav links */}
         <div className="nav-links nav-links--desktop">
-          <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`} onClick={scrollToTop}>
-            Week
-          </Link>
-          <Link to="/month" className={`nav-link ${location.pathname === '/month' ? 'active' : ''}`} onClick={scrollToTop}>
-            Activity
+          <Link
+            to="/"
+            className={`nav-link ${location.pathname === '/' || location.pathname === '/month' ? 'active' : ''}`}
+            onClick={scrollToTop}
+          >
+            Habits
           </Link>
           <Link to="/todos" className={`nav-link ${location.pathname === '/todos' ? 'active' : ''}`} onClick={scrollToTop}>
             Todos
@@ -128,11 +129,12 @@ function Navbar() {
 
       {/* Mobile drawer */}
       <div className={`nav-drawer ${menuOpen ? 'is-open' : ''}`} aria-hidden={!menuOpen}>
-        <Link to="/" className={`nav-drawer-link ${location.pathname === '/' ? 'active' : ''}`} onClick={scrollToTop}>
-          Week
-        </Link>
-        <Link to="/month" className={`nav-drawer-link ${location.pathname === '/month' ? 'active' : ''}`} onClick={scrollToTop}>
-          Activity
+        <Link
+          to="/"
+          className={`nav-drawer-link ${location.pathname === '/' || location.pathname === '/month' ? 'active' : ''}`}
+          onClick={scrollToTop}
+        >
+          Habits
         </Link>
         <Link to="/todos" className={`nav-drawer-link ${location.pathname === '/todos' ? 'active' : ''}`} onClick={scrollToTop}>
           Todos

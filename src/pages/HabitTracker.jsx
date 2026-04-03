@@ -1,8 +1,8 @@
 import React, { useCallback, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useHabitData } from '../context/HabitDataContext'
 import { CATEGORY_LABELS } from '../habits/habitConfig'
+import HabitContributionChart from '../components/HabitContributionChart'
 import HabitManagerModal from '../components/HabitManagerModal'
 import {
   isFutureYmd,
@@ -17,6 +17,7 @@ import {
   weekScore,
 } from '../habits/habitStats'
 import './HabitTracker.css'
+import './HabitMonthSummary.css'
 
 function dayLabel(ymd) {
   const [y, m, d] = ymd.split('-').map(Number)
@@ -36,6 +37,7 @@ function HabitTracker() {
   const { cells, habits, loading, error, saving, reload, cycleCell, getCell } = useHabitData()
   const [weekOffset, setWeekOffset] = useState(0)
   const [showManager, setShowManager] = useState(false)
+  const [activityNow] = useState(() => new Date())
 
   const now = new Date()
   const anchorDate = useMemo(() => {
@@ -98,9 +100,9 @@ function HabitTracker() {
     <main className="habit-page">
       <div className="habit-inner">
         <header className="habit-header">
-          <h1 className="habit-title">Habit tracker</h1>
+          <h1 className="habit-title">Habits</h1>
           <p className="habit-sub">
-            Dublin · daily log · synced to your account via Janus (Firestore)
+            Week grid below, long-term activity graphs further down — synced via Janus (Firestore)
           </p>
         </header>
 
@@ -256,11 +258,33 @@ function HabitTracker() {
           )}
         </section>
 
+        <section className="habit-activity-section" id="activity" aria-label="Activity over time">
+          <header className="habit-month-header habit-activity-section-header">
+            <h2 className="habit-month-title">Activity</h2>
+          </header>
+
+          <p className="habit-month-lead">
+            Last <strong>365 days</strong> per habit — same layout as a contribution graph (darker squares are fewer
+            completions; greens scale with streak length). Orange is a logged miss.
+          </p>
+
+          {habits.length === 0 && (
+            <p className="habit-month-empty">
+              No habits yet. Add some with <strong>Manage Habits</strong> above, then your graphs will show up here.
+            </p>
+          )}
+
+          {habits.map((h) => (
+            <HabitContributionChart key={h.id} habit={h} cells={cells} now={activityNow} />
+          ))}
+
+          <p className="habit-month-note">
+            Synced to your account via the Janus API. Past days with no cell are shown as empty (not the same as a miss).
+          </p>
+        </section>
+
         <p className="habit-footnote">
-          Stored under your user record in Firestore (field <code>habits_v1</code>). Signed in as {email}.{' '}
-          <Link to="/month" className="habit-link">
-            Activity graph
-          </Link>
+          Stored under your user record in Firestore (field <code>habits_v1</code>). Signed in as {email}.
         </p>
       </div>
 

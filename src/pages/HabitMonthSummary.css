@@ -62,3 +62,9 @@
   border-radius: 8px;
   background: var(--bg-secondary);
 }
+
+.habit-activity-section {
+  margin-top: 2.25rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
+}
